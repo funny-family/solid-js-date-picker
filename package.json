@@ -1,0 +1,66 @@
+{
+  "name": "solid-js-date-picker",
+  "private": false,
+  "version": "0.0.0",
+  "description": "",
+  "author": "funny-family <https://github.com/funny-family>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/funny-family/solid-js-date-picker.git"
+  },
+  "homepage": "https://github.com/funny-family/solid-js-date-picker#readme",
+  "bugs": {
+    "url": "https://github.com/funny-family/solid-js-date-picker/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "solid",
+    "solid-js",
+    "solid-js-date-picker",
+    "date-picker",
+    "datepicker",
+    "date",
+    "picker"
+  ],
+  "type": "module",
+  "types": "./dist/types/index.d.ts",
+  "module": "./dist/esm/index.js",
+  "main": "./dist/cjs/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./styles.css": "./dist/styles/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "concurrently \"rm -rf ./dist\" \"pnpm build:watch\"",
+    "vite:build": "vite build",
+    "build": "./scripts/build.sh",
+    "build:watch": "vite build --watch",
+    "release": "release-it",
+    "publish": "pnpm build && pnpm release"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "autoprefixer": "^10.4.17",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.4.33",
+    "postcss-load-config": "^4.0.2",
+    "release-it": "^16.3.0",
+    "typescript": "^5.3.3",
+    "vite": "^4.5.2",
+    "vite-plugin-dts": "^3.7.1",
+    "vite-plugin-solid": "^2.8.2"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.8.11"
+  }
+}
