@@ -24,10 +24,19 @@
   ],
   "cSpell.words": [
     "autoname",
+    "contenteditable",
     "datepicker",
     "focusable",
+    "formaction",
+    "formenctype",
+    "formmethod",
+    "formtarget",
     "hoverable",
+    "inputmode",
     "labelledby",
+    "maxlength",
+    "popovertarget",
+    "popovertargetaction",
     "tooltipable"
   ]
 }
