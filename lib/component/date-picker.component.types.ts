@@ -49,6 +49,7 @@ export type DatePickerAttrs = Omit<
 
 export type DatePickerProps = {
   keepNative?: boolean;
+  icon?: JSX.Element
 };
 
 export type DatePickerAttrsAndProps = DatePickerAttrs & DatePickerProps;
