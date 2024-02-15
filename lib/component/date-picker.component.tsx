@@ -1,4 +1,4 @@
-import { createSignal, onMount, splitProps } from 'solid-js';
+import { createSignal, onCleanup, onMount, splitProps } from 'solid-js';
 import type {
   DatePickerComponent,
   DatePickerForwardElement,
@@ -6,48 +6,115 @@ import type {
 } from './date-picker.component.types';
 import './date-picker.styles.css';
 
-export const DatePicker: DatePickerComponent = (attrsAndProps) => {
-  let dateInputRef: DatePickerForwardElement = null as any;
+/**
+  date formats:
+  @see https://docs.oracle.com/cd/E41183_01/DR/Date_Format_Types.html
+  @see https://en.wikipedia.org/wiki/Date_format_by_country
+*/
 
-  const [props, attrs] = splitProps(attrsAndProps, ['keepNative', 'icon']);
+var isArray = Array.isArray;
+var openEventName = 'open' as const;
 
-  const currentDate = new Date();
-  const [value, setValue] = createSignal(
+export var DatePicker: DatePickerComponent = (attrsAndProps) => {
+  var dateInputRef: DatePickerForwardElement = null as any;
+  var textInputRef: HTMLInputElement = null as any;
+  var buttonRef: HTMLButtonElement = null as any;
+
+  var [props, attrs] = splitProps(attrsAndProps, [
+    'keepNative',
+    'icon',
+    'format',
+    'onOpen',
+  ]);
+
+  var currentDate = new Date();
+  var [value, setValue] = createSignal(
     // attrs?.value || currentDate.toISOString().substring(0, 10)
     attrs?.value || ''
   );
 
-  const [textInputValue, setTextInputValue] = createSignal('');
-  const [dateInputValue, setDateInputValue] = createSignal('');
+  var [textInputValue, setTextInputValue] = createSignal('');
+  var [dateInputValue, setDateInputValue] = createSignal('');
 
-  const id = () => attrs?.id || 'da7d68734';
+  var id = () => attrs?.id || 'da7d68734';
 
-  const keepNative = () =>
-    props?.keepNative == null ? false : props.keepNative;
+  var keepNative = () => (props?.keepNative == null ? false : props.keepNative);
 
-  const icon = () => (props?.icon == null ? '🗓️' : props.icon);
+  var icon = () => (props?.icon == null ? '🗓️' : props.icon);
 
-  const ref: DatePickerRef = (el) => {
+  var format = () => props?.format;
+
+  var openEvent = new CustomEvent(openEventName);
+  var onOpen: EventListenerOrEventListenerObject = function (
+    this: Element,
+    event
+  ) {
+    if (props?.onOpen != null) {
+      if (typeof props.onOpen === 'function') {
+        props.onOpen(
+          event as Event & {
+            currentTarget: HTMLInputElement;
+            target: Element;
+          }
+        );
+      }
+
+      if (isArray(props.onOpen)) {
+        // handler(data, event);
+        props.onOpen[0](props.onOpen[1], event);
+      }
+    }
+  };
+
+  var ref: DatePickerRef = (el) => {
     dateInputRef = el;
   };
 
   onMount(() => {
-    var showPicker = dateInputRef?.showPicker;
+    const showPicker = dateInputRef?.showPicker;
     dateInputRef.showPicker = function () {
       showPicker.call(this);
 
-      console.log(1231312, this);
+      this.dispatchEvent(openEvent);
     };
+    dateInputRef.addEventListener(openEventName, onOpen);
+  });
+
+  onCleanup(() => {
+    dateInputRef.removeEventListener(openEventName, onOpen);
   });
 
   return (
     <div
       class="solid-js-date-picker"
-      onChange={(event) => {
-        console.log(event);
+      onClick={(event) => {
+        if (event.target === buttonRef) {
+          dateInputRef.showPicker();
+        }
+      }}
+      onInput={(event) => {
+        if (event.target === textInputRef) {
+          console.log('input text "input" event:', event);
+        }
       }}
     >
-      <input type="text" value={value()} />
+      {/* <div>
+        <input name="day" type="text" minlength={2} maxlength={2} />
+        <br />
+        <input name="month" type="text" minlength={2} maxlength={2} />
+        <br />
+        <input name="year" type="text" minlength={2} maxlength={6} />
+        <br />
+      </div> */}
+
+      <input
+        type="text"
+        placeholder="MM.DD.YYYY"
+        ref={(el) => {
+          textInputRef = el;
+        }}
+        value={value()}
+      />
       <input
         {...attrs}
         type="date"
@@ -85,7 +152,15 @@ export const DatePicker: DatePickerComponent = (attrsAndProps) => {
         formMethod={null as any}
         /* --------------------------------- omitted attrs ------------------------- */
       />
-      <div class="solid-js-date-picker__icon">{icon()}</div>
+      <button
+        type="button"
+        class="solid-js-date-picker__icon"
+        ref={(el) => {
+          buttonRef = el;
+        }}
+      >
+        {icon()}
+      </button>
     </div>
   );
 };
@@ -107,4 +182,8 @@ export const DatePicker: DatePickerComponent = (attrsAndProps) => {
       // ...
     }}
   />
+*/
+
+/*
+    output value is always: "YYYY-MM-DD"
 */
