@@ -20,6 +20,7 @@
     "date-picker",
     "datepicker",
     "date",
+    "daytime",
     "picker"
   ],
   "type": "module",
@@ -55,6 +56,7 @@
     "postcss": "^8.4.33",
     "postcss-load-config": "^4.0.2",
     "release-it": "^16.3.0",
+    "sass": "^1.71.0",
     "typescript": "^5.3.3",
     "vite": "^4.5.2",
     "vite-plugin-dts": "^3.7.1",
