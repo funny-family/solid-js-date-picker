@@ -1,4 +1,4 @@
-import type { Component, JSX } from 'solid-js';
+import type { Component, JSX, Ref } from 'solid-js';
 import type { pickerExposeSymbol } from './picker.component';
 
 export type PickerExpose = {
@@ -6,11 +6,18 @@ export type PickerExpose = {
   close: () => void;
 };
 
-export type PickerRef = HTMLDialogElement & {
+export type PickerRef = HTMLElement & {
   [pickerExposeSymbol]: PickerExpose;
 };
 
-export type PickerAttrs = JSX.IntrinsicElements['dialog'];
+export type PickerAttrs = Omit<
+  JSX.IntrinsicElements['dialog'],
+  /* ------------------------- omitted attrs ------------------------- */
+  'ref'
+  /* ------------------------- omitted attrs ------------------------- */
+> & {
+  ref?: Ref<PickerRef>;
+};
 
 export type PickerProps = {
   onOpen?: JSX.EventHandlerUnion<HTMLElement, Event>;

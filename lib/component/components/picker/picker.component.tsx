@@ -5,7 +5,7 @@ import type {
   PickerRef,
 } from './picker.component.types';
 import { isArray, openEventName } from '../../../utils';
-import './picker.styles.css';
+import './picker.styles.scss';
 
 export var pickerExposeSymbol = Symbol('Picker') as any as 'Picker';
 
@@ -37,12 +37,12 @@ export var Picker: PickerComponent = (attrsAndProps) => {
   };
 
   var open: PickerExpose['open'] = () => {
-    pickerRef.showModal();
+    (pickerRef as unknown as HTMLDialogElement).showModal();
     pickerRef.dispatchEvent(openEvent);
   };
 
   var close: PickerExpose['close'] = () => {
-    pickerRef.close();
+    (pickerRef as unknown as HTMLDialogElement).close();
   };
 
   var ref: (el: HTMLDialogElement) => void = (el) => {
@@ -62,5 +62,11 @@ export var Picker: PickerComponent = (attrsAndProps) => {
     pickerRef.removeEventListener(openEventName, onOpen);
   });
 
-  return <dialog ref={ref} {...attrs} />;
+  return (
+    <dialog
+      {...attrs}
+      ref={ref as any}
+      class={`${attrs?.class || ''} solid-js-date-picker-picker`}
+    />
+  );
 };
