@@ -22,6 +22,21 @@
   cursor: pointer;
 } */
 
+.solid-js-date-picker-container {
+  // ******************************** DEBUG ********************************
+  position: relative;
+  display: inline-block;
+  width: 300px;
+  border: 2px solid red;
+  // ******************************** DEBUG ********************************
+}
+
+.solid-js-date-picker-container input[type='date'] {
+  position: absolute;
+  left: 0;
+  z-index: -1;
+}
+
 .solid-js-date-picker-container input[type='date'] {
   &::-webkit-calendar-picker-indicator,
   &::-webkit-inner-spin-button {
@@ -43,4 +58,11 @@
   &::-webkit-input-placeholder {
     visibility: hidden !important;
   }
+}
+
+.solid-js-date-picker__picker {
+  // ******************************** DEBUG ********************************
+  background-color: azure;
+  border: 1px solid greenyellow;
+  // ******************************** DEBUG ********************************
 }
