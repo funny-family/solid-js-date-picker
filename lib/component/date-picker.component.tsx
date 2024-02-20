@@ -1,10 +1,19 @@
-import { createSignal, onCleanup, onMount, splitProps } from 'solid-js';
+import {
+  type JSX,
+  Show,
+  createSignal,
+  onCleanup,
+  onMount,
+  splitProps,
+} from 'solid-js';
 import type {
   DatePickerComponent,
   DatePickerForwardElement,
   DatePickerRef,
 } from './date-picker.component.types';
-import './date-picker.styles.css';
+import './date-picker.styles.scss';
+import { parseFormat } from './date-picker.utils';
+import { openEventName, isArray } from '../utils';
 
 /**
   date formats:
@@ -12,17 +21,15 @@ import './date-picker.styles.css';
   @see https://en.wikipedia.org/wiki/Date_format_by_country
 */
 
-var isArray = Array.isArray;
-var openEventName = 'open' as const;
-
 export var DatePicker: DatePickerComponent = (attrsAndProps) => {
+  var containerRef: HTMLDivElement = null as any;
   var dateInputRef: DatePickerForwardElement = null as any;
   var textInputRef: HTMLInputElement = null as any;
   var buttonRef: HTMLButtonElement = null as any;
+  var pickerRef: HTMLDialogElement = null as any;
 
   var [props, attrs] = splitProps(attrsAndProps, [
-    'keepNative',
-    'icon',
+    'keepNativePicker',
     'format',
     'onOpen',
   ]);
@@ -36,13 +43,17 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   var [textInputValue, setTextInputValue] = createSignal('');
   var [dateInputValue, setDateInputValue] = createSignal('');
 
-  var id = () => attrs?.id || 'da7d68734';
+  var [isPickerVisible, setPickerVisibility] = createSignal(false);
 
-  var keepNative = () => (props?.keepNative == null ? false : props.keepNative);
+  var keepNativePicker = () => {
+    return props?.keepNativePicker == null ? false : props.keepNativePicker;
+  };
 
-  var icon = () => (props?.icon == null ? '🗓️' : props.icon);
+  var format = () => {
+    return props?.format || 'MM/DD/YYYY';
+  };
 
-  var format = () => props?.format;
+  console.log('parsed format:', parseFormat(format()));
 
   var openEvent = new CustomEvent(openEventName);
   var onOpen: EventListenerOrEventListenerObject = function (
@@ -66,107 +77,215 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     }
   };
 
-  var ref: DatePickerRef = (el) => {
-    dateInputRef = el;
-  };
+  // var ref: DatePickerRef = (el) => {
+  //   dateInputRef = el;
+  // };
 
   onMount(() => {
     const showPicker = dateInputRef?.showPicker;
     dateInputRef.showPicker = function () {
-      showPicker.call(this);
+      if (keepNativePicker()) {
+        showPicker.call(this);
+      }
+
+      const containerRect = containerRef.getBoundingClientRect();
+
+      pickerRef.style.margin = '0';
+      pickerRef.style.top = `${containerRect.top + window.scrollY}px`;
+      pickerRef.style.left = `${containerRect.left + window.scrollX}px`;
+      pickerRef.style.transform = `translate3d(0, ${containerRect.height}px, 0)`;
+
+      pickerRef.showModal();
+
+      setPickerVisibility(true);
 
       this.dispatchEvent(openEvent);
     };
     dateInputRef.addEventListener(openEventName, onOpen);
+
+    console.group('refs:');
+    console.log('containerRef:', containerRef, { containerRef });
+    console.log('dateInputRef:', dateInputRef, { dateInputRef });
+    console.log('textInputRef:', textInputRef, { textInputRef });
+    console.log('buttonRef:', buttonRef, { buttonRef });
+    console.log('pickerRef:', pickerRef, { pickerRef });
+    console.groupEnd();
   });
 
   onCleanup(() => {
     dateInputRef.removeEventListener(openEventName, onOpen);
   });
 
+  // var DateInput = () => {
+  //   return (
+  //     <input
+  //       {...attrs}
+  //       type="date"
+  //       ref={ref}
+  //       value={value()}
+  //       /* --------------------------------- omitted attrs ------------------------- */
+  //       accept={null as any}
+  //       alt={null as any}
+  //       autocapitalize={null as any}
+  //       autocomplete={null as any}
+  //       capture={null as any}
+  //       checked={null as any}
+  //       // @ts-ignore
+  //       dirname={null as any}
+  //       formaction={null as any}
+  //       formenctype={null as any}
+  //       formtarget={null as any}
+  //       height={null as any}
+  //       maxlength={null as any}
+  //       minlength={null as any}
+  //       multiple={null as any}
+  //       pattern={null as any}
+  //       placeholder={null as any}
+  //       // @ts-ignore
+  //       popovertarget={null as any}
+  //       // @ts-ignore
+  //       popovertargetaction={null as any}
+  //       size={null as any}
+  //       width={null as any}
+  //       contenteditable={null as any}
+  //       inputmode={null as any}
+  //       innerHTML={null as any}
+  //       innerText={null as any}
+  //       formmethod={null as any}
+  //       formMethod={null as any}
+  //       /* --------------------------------- omitted attrs ------------------------- */
+  //     />
+  //   );
+  // };
+
+  var DefaultChildren = () => {
+    return (
+      <>
+        <div>isPickerVisible: {`${isPickerVisible()}`}</div>
+
+        <input
+          type="text"
+          placeholder="MM.DD.YYYY"
+          ref={(el) => {
+            textInputRef = el;
+          }}
+          value={value()}
+        />
+        <input
+          {...attrs}
+          type="date"
+          ref={(el) => {
+            dateInputRef = el;
+          }}
+          value={value()}
+          /* --------------------------------- omitted attrs ------------------------- */
+          accept={null as any}
+          alt={null as any}
+          autocapitalize={null as any}
+          autocomplete={null as any}
+          capture={null as any}
+          checked={null as any}
+          // @ts-ignore
+          dirname={null as any}
+          formaction={null as any}
+          formenctype={null as any}
+          formtarget={null as any}
+          height={null as any}
+          maxlength={null as any}
+          minlength={null as any}
+          multiple={null as any}
+          pattern={null as any}
+          placeholder={null as any}
+          // @ts-ignore
+          popovertarget={null as any}
+          // @ts-ignore
+          popovertargetaction={null as any}
+          size={null as any}
+          width={null as any}
+          contenteditable={null as any}
+          inputmode={null as any}
+          innerHTML={null as any}
+          innerText={null as any}
+          formmethod={null as any}
+          formMethod={null as any}
+          /* --------------------------------- omitted attrs ------------------------- */
+        />
+      </>
+    );
+  };
+
   return (
     <div
-      class="solid-js-date-picker"
+      class="solid-js-date-picker-container"
+      ref={(el) => {
+        containerRef = el;
+      }}
       onClick={(event) => {
         if (event.target === buttonRef) {
           dateInputRef.showPicker();
         }
       }}
       onInput={(event) => {
+        if (event.target === dateInputRef) {
+          // TODO: format value and set it later
+          setValue((event.target as HTMLInputElement).value);
+        }
+
         if (event.target === textInputRef) {
           console.log('input text "input" event:', event);
         }
       }}
     >
-      {/* <div>
-        <input name="day" type="text" minlength={2} maxlength={2} />
-        <br />
-        <input name="month" type="text" minlength={2} maxlength={2} />
-        <br />
-        <input name="year" type="text" minlength={2} maxlength={6} />
-        <br />
-      </div> */}
-
-      <input
-        type="text"
-        placeholder="MM.DD.YYYY"
-        ref={(el) => {
-          textInputRef = el;
-        }}
-        value={value()}
-      />
-      <input
-        {...attrs}
-        type="date"
-        ref={ref}
-        value={value()}
-        /* --------------------------------- omitted attrs ------------------------- */
-        accept={null as any}
-        alt={null as any}
-        autocapitalize={null as any}
-        autocomplete={null as any}
-        capture={null as any}
-        checked={null as any}
-        // @ts-ignore
-        dirname={null as any}
-        formaction={null as any}
-        formenctype={null as any}
-        formtarget={null as any}
-        height={null as any}
-        maxlength={null as any}
-        minlength={null as any}
-        multiple={null as any}
-        pattern={null as any}
-        placeholder={null as any}
-        // @ts-ignore
-        popovertarget={null as any}
-        // @ts-ignore
-        popovertargetaction={null as any}
-        size={null as any}
-        width={null as any}
-        contenteditable={null as any}
-        inputmode={null as any}
-        innerHTML={null as any}
-        innerText={null as any}
-        formmethod={null as any}
-        formMethod={null as any}
-        /* --------------------------------- omitted attrs ------------------------- */
-      />
-      <button
-        type="button"
-        class="solid-js-date-picker__icon"
-        ref={(el) => {
-          buttonRef = el;
-        }}
+      <Show
+        when={attrs?.children != null}
+        fallback={
+          (() => {
+            <DefaultChildren />;
+          }) as unknown as JSX.Element
+        }
       >
-        {icon()}
-      </button>
+        {
+          (() => {
+            return (
+              <>
+                <DefaultChildren />
+
+                <dialog
+                  class="solid-js-date-picker__picker"
+                  ref={(el) => {
+                    pickerRef = el;
+                  }}
+                  onClick={(event) => {
+                    if (
+                      event.offsetX < 0 ||
+                      event.offsetX >
+                        (event.target as HTMLElement).offsetWidth ||
+                      event.offsetY < 0 ||
+                      event.offsetY > (event.target as HTMLElement).offsetHeight
+                    ) {
+                      pickerRef.close();
+                      event.preventDefault();
+                      event.stopImmediatePropagation();
+                      event.stopPropagation();
+                    }
+                  }}
+                >
+                  <input type="text" />
+                  <button type="button">1231</button>
+                </dialog>
+
+                {attrs.children}
+              </>
+            );
+          }) as unknown as JSX.Element
+        }
+      </Show>
     </div>
   );
 };
 
 /*
-  <DatePicker keepNative={false}>
+  <DatePicker keepNativePicker={false}>
     {(args) => {
       return (
         ...
@@ -177,7 +296,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   <DatePicker
     min="2017-04-01"
     max="2017-04-30"
-    keepNative
+    keepNativePicker
     onChange={(event) => {
       // ...
     }}

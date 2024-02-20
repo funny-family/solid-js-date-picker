@@ -7,7 +7,7 @@ export type DatePickerRef = (el: DatePickerForwardElement) => void;
 export type DatePickerAttrs = Omit<
   JSX.IntrinsicElements['input'],
   /* --------------------------------- omitted attrs ------------------------- */
-  | 'children'
+  // | 'children'
   | 'type'
   | 'accept'
   | 'alt'
@@ -48,8 +48,7 @@ export type DatePickerAttrs = Omit<
 >;
 
 export type DatePickerProps = {
-  keepNative?: boolean;
-  icon?: JSX.Element;
+  keepNativePicker?: boolean;
   format?: string;
   onOpen?: JSX.EventHandlerUnion<HTMLInputElement, Event>;
 };
