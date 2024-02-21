@@ -6,18 +6,20 @@ export type PickerExpose = {
   close: () => void;
 };
 
-export type PickerRef = HTMLElement & {
+export type PickerExposeObject = {
   [pickerExposeSymbol]: PickerExpose;
 };
 
+export type PickerRef = HTMLElement & PickerExposeObject;
+
 export type PickerAttrs = Omit<
-  JSX.IntrinsicElements['dialog'],
+  JSX.IntrinsicElements['div'],
   /* ------------------------- omitted attrs ------------------------- */
   'ref'
   /* ------------------------- omitted attrs ------------------------- */
 > & {
   ref?: Ref<PickerRef>;
-};
+} & Pick<JSX.IntrinsicElements['dialog'], 'onClose' | 'onCancel'>;
 
 export type PickerProps = {
   onOpen?: JSX.EventHandlerUnion<HTMLElement, Event>;

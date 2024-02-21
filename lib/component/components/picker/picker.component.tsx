@@ -2,6 +2,7 @@ import { onCleanup, onMount, splitProps } from 'solid-js';
 import type {
   PickerComponent,
   PickerExpose,
+  PickerExposeObject,
   PickerRef,
 } from './picker.component.types';
 import { isArray, openEventName } from '../../../utils';
@@ -10,7 +11,7 @@ import './picker.styles.scss';
 export var pickerExposeSymbol = Symbol('Picker') as any as 'Picker';
 
 export var Picker: PickerComponent = (attrsAndProps) => {
-  var pickerRef = null as any as PickerRef;
+  var pickerRef: HTMLDialogElement & PickerExposeObject = null as any;
 
   var [props, attrs] = splitProps(attrsAndProps, ['onOpen']);
 
@@ -37,12 +38,12 @@ export var Picker: PickerComponent = (attrsAndProps) => {
   };
 
   var open: PickerExpose['open'] = () => {
-    (pickerRef as unknown as HTMLDialogElement).showModal();
+    pickerRef.showModal();
     pickerRef.dispatchEvent(openEvent);
   };
 
   var close: PickerExpose['close'] = () => {
-    (pickerRef as unknown as HTMLDialogElement).close();
+    pickerRef.close();
   };
 
   var ref: (el: HTMLDialogElement) => void = (el) => {
@@ -51,7 +52,7 @@ export var Picker: PickerComponent = (attrsAndProps) => {
     (pickerRef as any)[pickerExposeSymbol] = {
       open,
       close,
-    };
+    } satisfies PickerExpose;
   };
 
   onMount(() => {
@@ -64,8 +65,8 @@ export var Picker: PickerComponent = (attrsAndProps) => {
 
   return (
     <dialog
-      {...attrs}
-      ref={ref as any}
+      {...(attrs as any)}
+      ref={ref}
       class={`${attrs?.class || ''} solid-js-date-picker-picker`}
     />
   );
