@@ -50,8 +50,8 @@ export type DatePickerAttrs = Omit<
 export type DatePickerProps = {
   keepNativePicker?: boolean;
   format?: string;
-  onOpen?: JSX.EventHandlerUnion<HTMLInputElement, Event>;
-  onClose?: JSX.EventHandlerUnion<HTMLInputElement, Event>;
+  onOpen?: JSX.EventHandlerUnion<HTMLElement, Event>;
+  onClose?: JSX.EventHandlerUnion<HTMLElement, Event>;
 };
 
 export type DatePickerAttrsAndProps = DatePickerAttrs & DatePickerProps;

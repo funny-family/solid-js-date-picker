@@ -9,6 +9,7 @@ import {
 } from 'solid-js';
 import {} from 'solid-js/web';
 import type {
+  DatePickerAttrsAndProps,
   DatePickerComponent,
   DatePickerForwardElement,
   DatePickerRef,
@@ -86,6 +87,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   var containerRef: HTMLDivElement = null as any;
   // var dateInputRef: DatePickerForwardElement = null as any;
   var dateInputRef: DatePickerForwardElement = customAttrs?.ref as any;
+  // var [dateInputRef,] = createSignal(customAttrs?.ref);
   var textInputRef: HTMLInputElement = null as any;
   var pickerRef: PickerRef | null = null as any;
 
@@ -108,95 +110,117 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     return props?.format || 'MM/DD/YYYY';
   };
 
-  console.log('parsed format:', parseFormat(format()));
+  // console.log('parsed format:', parseFormat(format()));
 
-  var openEvent = new CustomEvent(openEventName);
+  // var openEvent = new CustomEvent(openEventName);
   var onOpen: EventListenerOrEventListenerObject = function (
     this: Element,
     event
   ) {
-    if (props?.onOpen != null) {
-      if (typeof props.onOpen === 'function') {
-        props.onOpen(
-          event as Event & {
-            currentTarget: HTMLInputElement;
-            target: Element;
-          }
-        );
-      }
+    if (props?.onOpen == null) {
+      return;
+    }
 
-      if (isArray(props.onOpen)) {
-        // handler(data, event);
-        props.onOpen[0](props.onOpen[1], event);
-      }
+    if (typeof props.onOpen === 'function') {
+      props.onOpen(
+        event as Event & {
+          currentTarget: HTMLInputElement;
+          target: Element;
+        }
+      );
+    }
+
+    if (isArray(props.onOpen)) {
+      // handler(data, event);
+      props.onOpen[0](props.onOpen[1], event);
     }
   };
 
-  createEffect(() => {
+  var onClose: DatePickerAttrsAndProps['onClose'] = (event) => {
+    setPickerVisibility(false);
+
+    if (props?.onClose == null) {
+      return;
+    }
+
+    if (typeof props.onClose === 'function') {
+      props.onClose(event);
+    }
+
+    if (isArray(props.onClose)) {
+      // handler(data, event);
+      props.onClose[0](props.onClose[1], event);
+    }
+  };
+
+  onMount(() => {
+    // =============== get position of container element ===============
+    const containerRect = containerRef.getBoundingClientRect();
+    containerRef.style.setProperty(
+      '--date-picker-position-top',
+      `${containerRect.top + window.scrollY}px`
+    );
+    containerRef.style.setProperty(
+      '--date-picker-position-left',
+      `${containerRect.left + window.scrollX}px`
+    );
+    containerRef.style.setProperty(
+      '--date-picker-width',
+      `${containerRect.width}px`
+    );
+    containerRef.style.setProperty(
+      '--date-picker-height',
+      `${containerRect.height}px`
+    );
+    // =============== get position of container element ===============
+
+    const showPicker = dateInputRef?.showPicker;
+    dateInputRef.showPicker = function () {
+      if (keepNativePicker()) {
+        showPicker.call(this);
+      } else {
+        setPickerVisibility(true);
+      }
+
+      if (pickerRef != null) {
+        pickerRef[pickerExposeSymbol].open();
+
+        // dateInputRef.dispatchEvent(openEvent);
+      }
+    };
+
+    // dateInputRef.addEventListener(openEventName, onOpen);
+
+    console.group('refs:');
+    console.log('containerRef:', { containerRef });
+    console.log('dateInputRef:', { dateInputRef });
+    console.log('textInputRef:', { textInputRef });
+    console.log('pickerRef:', { pickerRef });
     console.log(3453543, {
       'customAttrs?.ref': customAttrs?.ref,
       dateInputRef,
       'ref': attrsAndProps?.ref,
       // 'rf': customAttrs?.ref(),
     });
-
-    const showPicker = dateInputRef?.showPicker;
-    dateInputRef.showPicker = function () {
-      if (keepNativePicker()) {
-        showPicker.call(this);
-      }
-
-      if (pickerRef != null) {
-        const containerRect = containerRef.getBoundingClientRect();
-        containerRef.style.setProperty(
-          '--date-picker-position-top',
-          `${containerRect.top + window.scrollY}px`
-        );
-        containerRef.style.setProperty(
-          '--date-picker-position-left',
-          `${containerRect.left + window.scrollX}px`
-        );
-        containerRef.style.setProperty(
-          '--date-picker-width',
-          `${containerRect.width}px`
-        );
-        containerRef.style.setProperty(
-          '--date-picker-height',
-          `${containerRect.height}px`
-        );
-
-        pickerRef[pickerExposeSymbol].open();
-      }
-
-      this.dispatchEvent(openEvent);
-
-      setPickerVisibility(true);
-    };
-
-    dateInputRef.addEventListener(openEventName, onOpen);
-
-    console.group('refs:');
-    console.log('containerRef:', containerRef, { containerRef });
-    console.log('dateInputRef:', dateInputRef, { dateInputRef });
-    console.log('textInputRef:', textInputRef, { textInputRef });
-    console.log('pickerRef:', pickerRef, { pickerRef });
     console.groupEnd();
   });
 
   onCleanup(() => {
-    dateInputRef.removeEventListener(openEventName, onOpen);
+    // dateInputRef.removeEventListener(openEventName, onOpen);
   });
 
   var DefaultChildren = () => {
     return (
       <>
-        <div>isPickerVisible: {`${isPickerVisible()}`}</div>
+        <pre>
+          <div>isPickerVisible: {`${isPickerVisible()}`}</div>
+          <div>keepNativePicker: {`${keepNativePicker()}`}</div>
+        </pre>
 
         <input
           {...inputAttrs}
           type="text"
           class="solid-js-date-picker-input"
-          placeholder={inputAttrs?.placeholder || 'MM.DD.YYYY'}
           ref={(el) => {
             textInputRef = el;
           }}
@@ -204,8 +228,8 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         />
         <input
           {...inputAttrs}
-          class="solid-js-date-picker-input"
           type="date"
+          class="solid-js-date-picker-input"
           ref={(el) => {
             // customAttrs.ref = el;
             dateInputRef = el;
@@ -269,44 +293,30 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       }}
     >
       <Show when={restAttrs?.children != null} fallback={<DefaultChildren />}>
-        <>
-          <DefaultChildren />
+        <DefaultChildren />
 
-          <Show when={keepNativePicker() === false} fallback={null}>
+        <Show when={keepNativePicker() === false} fallback={null}>
+          <Show when={isPickerVisible()} fallback={null}>
             <Picker
               class="solid-js-date-picker__picker"
               ref={(el) => {
                 pickerRef = el;
               }}
-              onClick={(event) => {
-                if (pickerRef != null) {
-                  if (
-                    event.offsetX < 0 ||
-                    event.offsetX > (event.target as HTMLElement).offsetWidth ||
-                    event.offsetY < 0 ||
-                    event.offsetY > (event.target as HTMLElement).offsetHeight
-                  ) {
-                    pickerRef[pickerExposeSymbol].close();
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-                    event.stopPropagation();
-                  }
-                }
+              onOpen={(event) => {
+                (onOpen as any)(event);
               }}
               onClose={(event) => {
-                if (props.onClose != null) {
-                  (props.onClose as any)(event);
-                }
+                (onClose as any)(event);
               }}
             >
               <input type="text" />
               <button type="button">1231</button>
             </Picker>
           </Show>
-
-          {restAttrs.children}
-        </>
+        </Show>
       </Show>
+
+      {restAttrs.children}
     </div>
   );
 };

@@ -22,6 +22,11 @@ export type PickerAttrs = Omit<
 } & Pick<JSX.IntrinsicElements['dialog'], 'onClose' | 'onCancel'>;
 
 export type PickerProps = {
+  shouldCloseOnBackgroundClick?: boolean;
+  /**
+   * @description
+   * Fires only when the picker is opened.
+   */
   onOpen?: JSX.EventHandlerUnion<HTMLElement, Event>;
 };
 
