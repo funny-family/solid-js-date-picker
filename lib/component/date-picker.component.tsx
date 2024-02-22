@@ -5,7 +5,9 @@ import {
   onCleanup,
   onMount,
   splitProps,
+  createEffect,
 } from 'solid-js';
+import {} from 'solid-js/web';
 import type {
   DatePickerComponent,
   DatePickerForwardElement,
@@ -18,6 +20,7 @@ import {
   pickerExposeSymbol,
 } from './components/picker/picker.component';
 import { type PickerRef } from './components/picker/picker.component.types';
+import type { UnionToArray } from '../types';
 import './date-picker.styles.scss';
 
 /**
@@ -27,25 +30,73 @@ import './date-picker.styles.scss';
 */
 
 export var DatePicker: DatePickerComponent = (attrsAndProps) => {
+  var [props, inputAttrs, customAttrs, restAttrs] = splitProps(
+    attrsAndProps,
+    ['keepNativePicker', 'format', 'onOpen', 'onClose'],
+    [
+      'accept',
+      'alt',
+      'autocomplete',
+      'autocorrect',
+      'autofocus',
+      'capture',
+      'checked',
+      'crossorigin',
+      'disabled',
+      'enterkeyhint',
+      'form',
+      'formaction',
+      'formenctype',
+      'formmethod',
+      'formnovalidate',
+      'formtarget',
+      'height',
+      'incremental',
+      'list',
+      'max',
+      'maxlength',
+      'min',
+      'minlength',
+      'multiple',
+      'name',
+      'pattern',
+      'placeholder',
+      'readonly',
+      'results',
+      'required',
+      'size',
+      'src',
+      'step',
+      'type',
+      'value',
+      'width',
+      'crossOrigin',
+      'formAction',
+      'formEnctype',
+      'formMethod',
+      'formNoValidate',
+      'formTarget',
+      'maxLength',
+      'minLength',
+      'readOnly',
+    ],
+    ['ref', 'classList', '$ServerOnly']
+  );
+
   var containerRef: HTMLDivElement = null as any;
-  var dateInputRef: DatePickerForwardElement = null as any;
+  // var dateInputRef: DatePickerForwardElement = null as any;
+  var dateInputRef: DatePickerForwardElement = customAttrs?.ref as any;
   var textInputRef: HTMLInputElement = null as any;
   var pickerRef: PickerRef | null = null as any;
 
-  var [props, attrs] = splitProps(attrsAndProps, [
-    'keepNativePicker',
-    'format',
-    'onOpen',
-  ]);
-
-  var currentDate = new Date();
+  // var currentDate = new Date();
   var [value, setValue] = createSignal(
     // attrs?.value || currentDate.toISOString().substring(0, 10)
-    attrs?.value || ''
+    inputAttrs?.value || ''
   );
 
-  var [textInputValue, setTextInputValue] = createSignal('');
-  var [dateInputValue, setDateInputValue] = createSignal('');
+  // var [textInputValue, setTextInputValue] = createSignal('');
+  // var [dateInputValue, setDateInputValue] = createSignal('');
 
   var [isPickerVisible, setPickerVisibility] = createSignal(false);
 
@@ -81,11 +132,14 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     }
   };
 
-  // var ref: DatePickerRef = (el) => {
-  //   dateInputRef = el;
-  // };
+  createEffect(() => {
+    console.log(3453543, {
+      'customAttrs?.ref': customAttrs?.ref,
+      dateInputRef,
+      'ref': attrsAndProps?.ref,
+      // 'rf': customAttrs?.ref(),
+    });
 
-  onMount(() => {
     const showPicker = dateInputRef?.showPicker;
     dateInputRef.showPicker = function () {
       if (keepNativePicker()) {
@@ -93,21 +147,30 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       }
 
       if (pickerRef != null) {
-        // ---------------- set picker position relative to date input ----------------
         const containerRect = containerRef.getBoundingClientRect();
-        pickerRef.style.margin = '0px';
-        pickerRef.style.top = `${containerRect.top + window.scrollY}px`;
-        pickerRef.style.left = `${containerRect.left + window.scrollX}px`;
-        pickerRef.style.transform = `translate3d(0, ${containerRect.height}px, 0)`;
-        pickerRef.style.willChange = 'transform';
-        // ---------------- set picker position relative to date input ----------------
+        containerRef.style.setProperty(
+          '--date-picker-position-top',
+          `${containerRect.top + window.scrollY}px`
+        );
+        containerRef.style.setProperty(
+          '--date-picker-position-left',
+          `${containerRect.left + window.scrollX}px`
+        );
+        containerRef.style.setProperty(
+          '--date-picker-width',
+          `${containerRect.width}px`
+        );
+        containerRef.style.setProperty(
+          '--date-picker-height',
+          `${containerRect.height}px`
+        );
 
         pickerRef[pickerExposeSymbol].open();
       }
 
-      setPickerVisibility(true);
-
       this.dispatchEvent(openEvent);
+
+      setPickerVisibility(true);
     };
 
     dateInputRef.addEventListener(openEventName, onOpen);
@@ -130,51 +193,56 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         <div>isPickerVisible: {`${isPickerVisible()}`}</div>
 
         <input
+          {...inputAttrs}
           type="text"
-          placeholder="MM.DD.YYYY"
+          class="solid-js-date-picker-input"
+          placeholder={inputAttrs?.placeholder || 'MM.DD.YYYY'}
           ref={(el) => {
             textInputRef = el;
           }}
           value={value()}
         />
         <input
-          {...attrs}
+          {...inputAttrs}
+          class="solid-js-date-picker-input"
           type="date"
           ref={(el) => {
+            // customAttrs.ref = el;
             dateInputRef = el;
           }}
+          // ref={dateInputRef}
           value={value()}
-          /* ----------------------- omitted attrs ---------------------- */
-          accept={null as any}
-          alt={null as any}
-          autocapitalize={null as any}
-          autocomplete={null as any}
-          capture={null as any}
-          checked={null as any}
-          // @ts-ignore
-          dirname={null as any}
-          formaction={null as any}
-          formenctype={null as any}
-          formtarget={null as any}
-          height={null as any}
-          maxlength={null as any}
-          minlength={null as any}
-          multiple={null as any}
-          pattern={null as any}
-          placeholder={null as any}
-          // @ts-ignore
-          popovertarget={null as any}
-          // @ts-ignore
-          popovertargetaction={null as any}
-          size={null as any}
-          width={null as any}
-          contenteditable={null as any}
-          inputmode={null as any}
-          innerHTML={null as any}
-          innerText={null as any}
-          formmethod={null as any}
-          formMethod={null as any}
-          /* ----------------------- omitted attrs ---------------------- */
+          // /* ----------------------- omitted attrs ---------------------- */
+          // accept={null as any}
+          // alt={null as any}
+          // autocapitalize={null as any}
+          // autocomplete={null as any}
+          // capture={null as any}
+          // checked={null as any}
+          // // @ts-ignore
+          // dirname={null as any}
+          // formaction={null as any}
+          // formenctype={null as any}
+          // formtarget={null as any}
+          // height={null as any}
+          // maxlength={null as any}
+          // minlength={null as any}
+          // multiple={null as any}
+          // pattern={null as any}
+          // placeholder={null as any}
+          // // @ts-ignore
+          // popovertarget={null as any}
+          // // @ts-ignore
+          // popovertargetaction={null as any}
+          // size={null as any}
+          // width={null as any}
+          // contenteditable={null as any}
+          // inputmode={null as any}
+          // innerHTML={null as any}
+          // innerText={null as any}
+          // formmethod={null as any}
+          // formMethod={null as any}
+          // /* ----------------------- omitted attrs ---------------------- */
         />
       </>
     );
@@ -182,7 +250,10 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
 
   return (
     <div
-      class="solid-js-date-picker-container"
+      {...(restAttrs as any)}
+      $ServerOnly={customAttrs?.$ServerOnly}
+      classList={customAttrs?.classList}
+      class={`${restAttrs?.class || ''} solid-js-date-picker-container`}
       ref={(el) => {
         containerRef = el;
       }}
@@ -197,7 +268,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         }
       }}
     >
-      <Show when={attrs?.children != null} fallback={<DefaultChildren />}>
+      <Show when={restAttrs?.children != null} fallback={<DefaultChildren />}>
         <>
           <DefaultChildren />
 
@@ -222,13 +293,18 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
                   }
                 }
               }}
+              onClose={(event) => {
+                if (props.onClose != null) {
+                  (props.onClose as any)(event);
+                }
+              }}
             >
               <input type="text" />
               <button type="button">1231</button>
             </Picker>
           </Show>
 
-          {attrs.children}
+          {restAttrs.children}
         </>
       </Show>
     </div>
