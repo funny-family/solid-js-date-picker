@@ -5,25 +5,31 @@ import type {
   PickerExpose,
   PickerExposeObject,
 } from './picker.component.types';
-import { isArray, openEventName } from '../../../utils';
+import {
+  falseAsString,
+  isArray,
+  openEventName,
+  trueAsString,
+} from '../../../utils';
 import './picker.styles.scss';
 
 export var pickerExposeSymbol = Symbol('Picker') as any as 'Picker';
 
-export var Picker: PickerComponent = (attrsAndProps) => {
-  var pickerRef: HTMLDialogElement & PickerExposeObject = null as any;
+var datasetOpen = 'data-open' as const;
 
+export var Picker: PickerComponent = (attrsAndProps) => {
   var [props, attrs] = splitProps(attrsAndProps, [
     'shouldCloseOnBackgroundClick',
     'onOpen',
   ]);
+
+  var pickerRef: HTMLDialogElement & PickerExposeObject = attrs?.ref as any;
 
   const shouldCloseOnBackgroundClick = () =>
     props?.shouldCloseOnBackgroundClick == null
       ? true
       : props.shouldCloseOnBackgroundClick;
 
-  var isOpenEventLocked = false;
   const openEvent = new CustomEvent(openEventName, {
     detail: null,
     bubbles: true,
@@ -56,24 +62,16 @@ export var Picker: PickerComponent = (attrsAndProps) => {
   var open: PickerExpose['open'] = () => {
     pickerRef.showModal();
 
-    if (isOpenEventLocked === false) {
+    if (pickerRef.dataset.open === falseAsString) {
       pickerRef.dispatchEvent(openEvent);
     }
 
-    isOpenEventLocked = true;
+    pickerRef.setAttribute(datasetOpen, trueAsString);
   };
 
   var close: PickerExpose['close'] = () => {
     pickerRef.close();
-  };
-
-  var ref: (el: HTMLDialogElement) => void = (el) => {
-    (pickerRef as unknown) = el;
-
-    (pickerRef as any)[pickerExposeSymbol] = {
-      open,
-      close,
-    } satisfies PickerExpose;
+    pickerRef.setAttribute(datasetOpen, falseAsString);
   };
 
   const onClick: PickerAttrsAndProps['onClick'] = (event) => {
@@ -84,21 +82,19 @@ export var Picker: PickerComponent = (attrsAndProps) => {
       event.offsetY > (event.target as HTMLElement).offsetHeight
     ) {
       if (shouldCloseOnBackgroundClick()) {
-        pickerRef.close();
+        close();
       }
     }
 
-    if (attrs?.onClick == null) {
-      return;
-    }
+    if (attrs?.onClick != null) {
+      if (typeof attrs.onClick === 'function') {
+        attrs.onClick(event);
+      }
 
-    if (typeof attrs.onClick === 'function') {
-      attrs.onClick(event);
-    }
-
-    if (isArray(attrs.onClick)) {
-      // handler(data, event);
-      attrs.onClick[0](attrs.onClick[1], event);
+      if (isArray(attrs.onClick)) {
+        // handler(data, event);
+        attrs.onClick[0](attrs.onClick[1], event);
+      }
     }
   };
 
@@ -113,7 +109,15 @@ export var Picker: PickerComponent = (attrsAndProps) => {
   return (
     <dialog
       {...(attrs as any)}
-      ref={ref}
+      data-open={falseAsString}
+      ref={(el) => {
+        (pickerRef as any) = el;
+
+        (pickerRef as any)[pickerExposeSymbol] = {
+          open,
+          close,
+        } satisfies PickerExpose;
+      }}
       class={`${attrs?.class || ''} solid-js-date-picker-picker`}
       onClick={(event) => onClick(event as any)}
     />
