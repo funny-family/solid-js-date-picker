@@ -87,9 +87,10 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   var containerRef: HTMLDivElement = null as any;
   // var dateInputRef: DatePickerForwardElement = null as any;
   var dateInputRef: DatePickerForwardElement = customAttrs?.ref as any;
-  // var [dateInputRef,] = createSignal(customAttrs?.ref);
+  // var [dateInputRef, setDateInputRef] = createSignal(customAttrs?.ref);
   var textInputRef: HTMLInputElement = null as any;
-  var pickerRef: PickerRef | null = null as any;
+  // var pickerRef: PickerRef = null as any;
+  var [pickerRef, setPickerRef] = createSignal(null as unknown as PickerRef);
 
   // var currentDate = new Date();
   var [value, setValue] = createSignal(
@@ -101,6 +102,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   // var [dateInputValue, setDateInputValue] = createSignal('');
 
   var [isPickerVisible, setPickerVisibility] = createSignal(false);
+  var [isDateInputVisible, setDateInputVisibility] = createSignal(false);
 
   var keepNativePicker = () => {
     return props?.keepNativePicker == null ? false : props.keepNativePicker;
@@ -139,19 +141,22 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   var onClose: DatePickerAttrsAndProps['onClose'] = (event) => {
     setPickerVisibility(false);
 
-    if (props?.onClose == null) {
-      return;
-    }
+    if (props?.onClose != null) {
+      if (typeof props.onClose === 'function') {
+        props.onClose(event);
+      }
 
-    if (typeof props.onClose === 'function') {
-      props.onClose(event);
-    }
-
-    if (isArray(props.onClose)) {
-      // handler(data, event);
-      props.onClose[0](props.onClose[1], event);
+      if (isArray(props.onClose)) {
+        // handler(data, event);
+        props.onClose[0](props.onClose[1], event);
+      }
     }
   };
+
+  // createEffect(() => {
+  //   // setDateInputRef()
+  //   dateInputRef = containerRef.querySelector('input[type="date"]');
+  // });
 
   onMount(() => {
     // =============== get position of container element ===============
@@ -183,7 +188,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       }
 
       if (pickerRef != null) {
-        pickerRef[pickerExposeSymbol].open();
+        pickerRef()[pickerExposeSymbol].open();
 
         // dateInputRef.dispatchEvent(openEvent);
       }
@@ -226,13 +231,15 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           }}
           value={value()}
         />
+        {/* <Show when={isDateInputVisible()} fallback={null}> */}
         <input
           {...inputAttrs}
           type="date"
           class="solid-js-date-picker-input"
           ref={(el) => {
-            // customAttrs.ref = el;
             dateInputRef = el;
+
+            dateInputRef.__$$_$$__ = '';
           }}
           // ref={dateInputRef}
           value={value()}
@@ -268,6 +275,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           // formMethod={null as any}
           // /* ----------------------- omitted attrs ---------------------- */
         />
+        {/* </Show> */}
       </>
     );
   };
@@ -300,7 +308,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
             <Picker
               class="solid-js-date-picker__picker"
               ref={(el) => {
-                pickerRef = el;
+                setPickerRef(el);
               }}
               onOpen={(event) => {
                 (onOpen as any)(event);
