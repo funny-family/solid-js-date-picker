@@ -40,22 +40,20 @@ export var Picker: PickerComponent = (attrsAndProps) => {
     this: Element,
     event
   ) {
-    if (props?.onOpen == null) {
-      return;
-    }
+    if (props?.onOpen != null) {
+      if (typeof props.onOpen === 'function') {
+        props.onOpen(
+          event as Event & {
+            currentTarget: HTMLElement;
+            target: Element;
+          }
+        );
+      }
 
-    if (typeof props.onOpen === 'function') {
-      props.onOpen(
-        event as Event & {
-          currentTarget: HTMLElement;
-          target: Element;
-        }
-      );
-    }
-
-    if (isArray(props.onOpen)) {
-      // handler(data, event);
-      props.onOpen[0](props.onOpen[1], event);
+      if (isArray(props.onOpen)) {
+        // handler(data, event);
+        props.onOpen[0](props.onOpen[1], event);
+      }
     }
   };
 
