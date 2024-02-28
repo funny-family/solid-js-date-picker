@@ -6,7 +6,7 @@ export type DatePickerRef = (el: DatePickerForwardElement) => void;
 
 export type DatePickerAttrs = Omit<
   JSX.IntrinsicElements['input'],
-  // /* --------------------------------- omitted attrs ------------------------- */
+  /* --------------------------------- omitted attrs ------------------------- */
   // | 'type'
   // | 'accept'
   // | 'alt'
@@ -43,9 +43,13 @@ export type DatePickerAttrs = Omit<
   // | 'readOnly'
   // | 'crossOrigin'
   // | 'formNoValidate'
-  // /* --------------------------------- omitted attrs ------------------------- */
-  ''
->;
+  /* --------------------------------- omitted attrs ------------------------- */
+  /* ------------------------- overwritten attrs ------------------------- */
+  'children'
+  /* ------------------------- overwritten attrs ------------------------- */
+> & {
+  children?: JSX.Element | (() => JSX.Element);
+};
 
 export type DatePickerProps = {
   keepNativePicker?: boolean;

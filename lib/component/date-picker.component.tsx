@@ -153,10 +153,16 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     }
   };
 
-  // createEffect(() => {
-  //   // setDateInputRef()
-  //   dateInputRef = containerRef.querySelector('input[type="date"]');
-  // });
+  createEffect(() => {
+    // setDateInputRef()
+    // dateInputRef = containerRef.querySelector('input[type="date"]');
+    // console.log(
+    //   'pickerRef',
+    //   (() => {
+    //     return pickerRef();
+    //   })()
+    // );
+  });
 
   onMount(() => {
     // =============== get position of container element ===============
@@ -179,7 +185,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     );
     // =============== get position of container element ===============
 
-    const showPicker = dateInputRef?.showPicker;
+    var showPicker = dateInputRef?.showPicker;
     dateInputRef.showPicker = function () {
       if (keepNativePicker()) {
         showPicker.call(this);
@@ -231,7 +237,6 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           }}
           value={value()}
         />
-        {/* <Show when={isDateInputVisible()} fallback={null}> */}
         <input
           {...inputAttrs}
           type="date"
@@ -275,7 +280,6 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           // formMethod={null as any}
           // /* ----------------------- omitted attrs ---------------------- */
         />
-        {/* </Show> */}
       </>
     );
   };
@@ -300,31 +304,31 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         }
       }}
     >
-      <Show when={restAttrs?.children != null} fallback={<DefaultChildren />}>
-        <DefaultChildren />
+      <DefaultChildren />
 
-        <Show when={keepNativePicker() === false} fallback={null}>
-          <Show when={isPickerVisible()} fallback={null}>
-            <Picker
-              class="solid-js-date-picker__picker"
-              ref={(el) => {
-                setPickerRef(el);
-              }}
-              onOpen={(event) => {
-                (onOpen as any)(event);
-              }}
-              onClose={(event) => {
-                (onClose as any)(event);
-              }}
-            >
-              <input type="text" />
-              <button type="button">1231</button>
-            </Picker>
-          </Show>
+      <Show when={keepNativePicker() === false} fallback={null}>
+        <Show when={isPickerVisible()} fallback={null}>
+          <Picker
+            class="solid-js-date-picker__picker"
+            ref={(el) => {
+              setPickerRef(el);
+            }}
+            onOpen={(event) => {
+              (onOpen as any)(event);
+            }}
+            onClose={(event) => {
+              (onClose as any)(event);
+            }}
+          >
+            <input type="text" />
+            <button type="button">1231</button>
+          </Picker>
         </Show>
       </Show>
 
-      {restAttrs.children}
+      {typeof restAttrs?.children === 'function'
+        ? restAttrs.children()
+        : restAttrs?.children}
     </div>
   );
 };
