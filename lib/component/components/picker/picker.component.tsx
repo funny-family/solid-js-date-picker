@@ -106,8 +106,8 @@ export var Picker: PickerComponent = (attrsAndProps) => {
 
   return (
     <dialog
-      {...(attrs as any)}
       data-open={falseAsString}
+      {...(attrs as any)}
       ref={(el) => {
         (pickerRef as any) = el;
 
