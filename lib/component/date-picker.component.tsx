@@ -86,7 +86,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
 
   var containerRef: HTMLDivElement = null as any;
   // var dateInputRef: DatePickerForwardElement = null as any;
-  var dateInputRef: DatePickerForwardElement = customAttrs?.ref as any;
+  var dateInputRef: DatePickerForwardElement = null as any;
   // var [dateInputRef, setDateInputRef] = createSignal(customAttrs?.ref);
   var textInputRef: HTMLInputElement = null as any;
   // var pickerRef: PickerRef = null as any;
@@ -153,16 +153,16 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     }
   };
 
-  createEffect(() => {
-    // setDateInputRef()
-    // dateInputRef = containerRef.querySelector('input[type="date"]');
-    // console.log(
-    //   'pickerRef',
-    //   (() => {
-    //     return pickerRef();
-    //   })()
-    // );
-  });
+  // createEffect(() => {
+  //   // setDateInputRef()
+  //   // dateInputRef = containerRef.querySelector('input[type="date"]');
+  //   // console.log(
+  //   //   'pickerRef',
+  //   //   (() => {
+  //   //     return pickerRef();
+  //   //   })()
+  //   // );
+  // });
 
   onMount(() => {
     // =============== get position of container element ===============
@@ -185,7 +185,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
     );
     // =============== get position of container element ===============
 
-    var showPicker = dateInputRef?.showPicker;
+    const showPicker = dateInputRef.showPicker;
     dateInputRef.showPicker = function () {
       if (keepNativePicker()) {
         showPicker.call(this);
@@ -213,6 +213,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       'ref': attrsAndProps?.ref,
       // 'rf': customAttrs?.ref(),
     });
+    console.log(9090909, { inputAttrs, dateInputRef });
     console.groupEnd();
   });
 
@@ -239,15 +240,14 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         />
         <input
           {...inputAttrs}
+          // {...customAttrs}
           type="date"
           class="solid-js-date-picker-input"
           ref={(el) => {
             dateInputRef = el;
-
-            dateInputRef.__$$_$$__ = '';
           }}
           // ref={dateInputRef}
-          value={value()}
+          // value={value()}
           // /* ----------------------- omitted attrs ---------------------- */
           // accept={null as any}
           // alt={null as any}
