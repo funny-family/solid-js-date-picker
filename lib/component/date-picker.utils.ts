@@ -87,3 +87,35 @@ export var parseFormat: ParseFormat = (formatString) => {
     //
   };
 };
+
+export var pickerController = (ref: HTMLDialogElement) => {
+  var picker = {
+    ref,
+    open: () => {
+      ref.showModal();
+    },
+    close: () => {
+      ref.close();
+    },
+    closeOnBackgroundClick: (
+      event: MouseEvent & {
+        currentTarget: HTMLDialogElement;
+        target: Element;
+      }
+    ) => {
+      if (
+        event.offsetX < 0 ||
+        event.offsetX > (event.target as HTMLElement).offsetWidth ||
+        event.offsetY < 0 ||
+        event.offsetY > (event.target as HTMLElement).offsetHeight
+      ) {
+        ref.close();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+      }
+    },
+  };
+
+  return picker;
+};
