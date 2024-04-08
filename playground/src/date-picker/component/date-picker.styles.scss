@@ -1,0 +1,48 @@
+.solid-js-date-picker-container {
+  position: relative;
+}
+
+.solid-js-date-picker-container input[type='date'] {
+  position: absolute;
+  left: 0;
+  z-index: -1;
+  visibility: hidden;
+
+  &::-webkit-calendar-picker-indicator,
+  &::-webkit-inner-spin-button {
+    display: none;
+    -webkit-appearance: none;
+  }
+
+  &::-moz-calendar-picker-indicator {
+    display: none;
+  }
+
+  &::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+    appearance: none;
+  }
+
+  &::-webkit-input-placeholder {
+    visibility: hidden !important;
+  }
+}
+
+.solid-js-date-picker-input {
+  //
+}
+
+.solid-js-date-picker__picker {
+  // ******************************** DEBUG ********************************
+  background-color: azure;
+  border: 1px solid greenyellow;
+  // ******************************** DEBUG ********************************
+
+  margin: 0;
+  top: var(--date-picker-position-top);
+  left: var(--date-picker-position-left);
+  transform: translate3d(0, var(--date-picker-height), 0);
+  will-change: transform;
+}
