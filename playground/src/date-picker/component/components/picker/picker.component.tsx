@@ -16,6 +16,7 @@ import './picker.styles.scss';
 export var pickerExposeSymbol = Symbol('Picker') as any as 'Picker';
 
 var datasetOpen = 'data-open' as const;
+export var datasetElementName = 'picker' as const;
 
 export var Picker: PickerComponent = (attrsAndProps) => {
   var [props, attrs] = splitProps(attrsAndProps, [
@@ -106,6 +107,7 @@ export var Picker: PickerComponent = (attrsAndProps) => {
 
   return (
     <dialog
+      data-element-name={datasetElementName}
       data-open={falseAsString}
       {...(attrs as any)}
       ref={(el) => {
