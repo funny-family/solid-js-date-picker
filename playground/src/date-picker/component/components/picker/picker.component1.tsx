@@ -1,15 +1,21 @@
-import { createSignal, onCleanup, onMount, splitProps } from 'solid-js';
-import { createMutable } from 'solid-js/store';
+import { onCleanup, onMount, splitProps } from 'solid-js';
 import type {
   PickerAttrsAndProps,
   PickerComponent,
   PickerExpose,
   PickerExposeObject,
 } from './picker.component.types';
-import { falseAsString, isArray, openEventName } from '../../../utils';
+import {
+  falseAsString,
+  isArray,
+  openEventName,
+  trueAsString,
+} from '../../../utils';
 import './picker.styles.scss';
 
 export var pickerExposeSymbol = Symbol('Picker') as any as 'Picker';
+
+var datasetOpen = 'data-open' as const;
 export var datasetElementName = 'picker' as const;
 
 export var Picker: PickerComponent = (attrsAndProps) => {
@@ -17,8 +23,6 @@ export var Picker: PickerComponent = (attrsAndProps) => {
     'shouldCloseOnBackgroundClick',
     'onOpen',
   ]);
-
-  var pickerStore = createMutable({ open: false });
 
   var pickerRef: HTMLDialogElement & PickerExposeObject = attrs?.ref as any;
 
@@ -54,20 +58,19 @@ export var Picker: PickerComponent = (attrsAndProps) => {
     }
   };
 
-  var show: PickerExpose['show'] = () => {
+  var open: PickerExpose['open'] = () => {
     pickerRef.showModal();
 
     if (pickerRef.dataset.open === falseAsString) {
       pickerRef.dispatchEvent(openEvent);
     }
 
-    pickerStore.open = true;
+    pickerRef.setAttribute(datasetOpen, trueAsString);
   };
 
   var close: PickerExpose['close'] = () => {
     pickerRef.close();
-
-    pickerStore.open = false;
+    pickerRef.setAttribute(datasetOpen, falseAsString);
   };
 
   const onClick: PickerAttrsAndProps['onClick'] = (event) => {
@@ -104,15 +107,14 @@ export var Picker: PickerComponent = (attrsAndProps) => {
 
   return (
     <dialog
-      data-open={pickerStore.open}
       data-element-name={datasetElementName}
+      data-open={falseAsString}
       {...(attrs as any)}
       ref={(el) => {
         (pickerRef as any) = el;
 
         (pickerRef as any)[pickerExposeSymbol] = {
-          open: pickerStore.open,
-          show,
+          open,
           close,
         } satisfies PickerExpose;
       }}
