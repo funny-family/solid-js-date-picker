@@ -1,23 +1,42 @@
 import { createEffect, onCleanup, children as toChildren } from 'solid-js';
 import type { WithPickerComponent } from './with-picker.component.types';
-import { datasetElementName as picker_datasetElementName } from '../picker/picker.component';
+import {
+  datasetElementName as picker_datasetElementName,
+  pickerExposeSymbol,
+  type PickerRef,
+} from '../picker';
 import { datasetElementName as dateInput_datasetElementName } from '../../date-picker.component';
 
 export var WithPicker: WithPickerComponent = (props) => {
   var children = toChildren(() => props.children);
 
   createEffect(() => {
-    var picker = (children() as HTMLElement).querySelector(
+    var pickerRef = (children() as HTMLElement).querySelector<PickerRef>(
       `[data-element-name="${picker_datasetElementName}"]`
     );
 
-    var dateInput = (children() as HTMLElement).querySelector(
+    var dateInputRef = (
+      children() as HTMLElement
+    ).querySelector<HTMLInputElement>(
       `[data-element-name="${dateInput_datasetElementName}"]`
     );
 
+    if (pickerRef != null && dateInputRef != null) {
+      const showPicker = dateInputRef.showPicker;
+      dateInputRef.showPicker = function () {
+        // if (keepNativePicker()) {
+        //   showPicker.call(this);
+        // } else {
+        //   setPickerVisibility(true);
+        // }
+
+        pickerRef![pickerExposeSymbol].show();
+      };
+    }
+
     console.log({
-      picker,
-      dateInput,
+      pickerRef,
+      dateInputRef,
       children: children(),
       c2a: children.toArray(),
     });
