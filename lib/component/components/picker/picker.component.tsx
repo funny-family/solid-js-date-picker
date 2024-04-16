@@ -1,4 +1,5 @@
-import { onCleanup, onMount, splitProps } from 'solid-js';
+import { createSignal, onCleanup, onMount, splitProps } from 'solid-js';
+import { createMutable } from 'solid-js/store';
 import type {
   PickerAttrsAndProps,
   PickerComponent,
@@ -9,19 +10,18 @@ import {
   falseAsString,
   isArray,
   openEventName,
-  trueAsString,
 } from '../../../utils';
 import './picker.styles.scss';
 
 export var pickerExposeSymbol = Symbol('Picker') as any as 'Picker';
-
-var datasetOpen = 'data-open' as const;
 
 export var Picker: PickerComponent = (attrsAndProps) => {
   var [props, attrs] = splitProps(attrsAndProps, [
     'shouldCloseOnBackgroundClick',
     'onOpen',
   ]);
+
+  var pickerStore = createMutable({ open: false });
 
   var pickerRef: HTMLDialogElement & PickerExposeObject = attrs?.ref as any;
 
@@ -57,19 +57,20 @@ export var Picker: PickerComponent = (attrsAndProps) => {
     }
   };
 
-  var open: PickerExpose['open'] = () => {
+  var show: PickerExpose['show'] = () => {
     pickerRef.showModal();
 
     if (pickerRef.dataset.open === falseAsString) {
       pickerRef.dispatchEvent(openEvent);
     }
 
-    pickerRef.setAttribute(datasetOpen, trueAsString);
+    pickerStore.open = true;
   };
 
   var close: PickerExpose['close'] = () => {
     pickerRef.close();
-    pickerRef.setAttribute(datasetOpen, falseAsString);
+
+    pickerStore.open = false;
   };
 
   const onClick: PickerAttrsAndProps['onClick'] = (event) => {
@@ -106,13 +107,14 @@ export var Picker: PickerComponent = (attrsAndProps) => {
 
   return (
     <dialog
-      data-open={falseAsString}
+      data-open={pickerStore.open}
       {...(attrs as any)}
       ref={(el) => {
         (pickerRef as any) = el;
 
         (pickerRef as any)[pickerExposeSymbol] = {
-          open,
+          open: pickerStore.open,
+          show,
           close,
         } satisfies PickerExpose;
       }}
