@@ -1,3 +1,4 @@
+import { Show, createEffect, createSignal } from 'solid-js';
 import { DatePicker, WithPicker, DatePickerRef } from './date-picker';
 import {
   Picker,
@@ -7,6 +8,13 @@ import {
 
 export const TestDatePicker = () => {
   var datePickerRef: DatePickerRef = null as any;
+  var pickerRef: PickerRef = null as any;
+
+  // createEffect(() => {
+  //   console.log(34345, pickerRef[pickerExposeSymbol]);
+  // });
+
+  const [open, setOpen] = createSignal(false);
 
   var DP = (
     <WithPicker>
@@ -16,18 +24,33 @@ export const TestDatePicker = () => {
         }}
       >
         {() => {
-          var pickerRef: PickerRef = null as any;
-
           return (
             <>
-              <Picker ref={pickerRef}>12313</Picker>
+              <Picker ref={pickerRef}>
+                {(args) => {
+                  return (
+                    <>
+                      <Show when={open()} fallback={null}>
+                        <section>
+                          <h1>Lorem</h1>
+                          <p>
+                            Lorem ipsum dolor sit amet consectetur adipisicing
+                            elit. Aut, fugiat?
+                          </p>
+                        </section>
+                      </Show>
+                    </>
+                  );
+                }}
+              </Picker>
 
               <button
                 type="button"
                 onClick={(event) => {
-                  // pickerRef[pickerExposeSymbol].open();
-                  console.log('datePickerRef:', { datePickerRef });
+                  console.log(90909, { datePickerRef, pickerRef });
                   datePickerRef.showPicker();
+                  // setOpen(Boolean(pickerRef.dataset.open));
+                  // setOpen(true);
                 }}
               >
                 🗓️
