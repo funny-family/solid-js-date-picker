@@ -2,7 +2,6 @@ import type { Component, JSX, Ref } from 'solid-js';
 import type { pickerExposeSymbol } from './picker.component';
 
 export type PickerExpose = {
-  open: boolean;
   show: () => void;
   close: () => void;
 };
@@ -16,12 +15,11 @@ export type PickerRef = HTMLElement & PickerExposeObject;
 export type PickerAttrs = Omit<
   JSX.IntrinsicElements['div'],
   /* ------------------------- omitted attrs ------------------------- */
-  'ref'
-  // 'children'
+  'ref' | 'children'
   /* ------------------------- omitted attrs ------------------------- */
 > & {
   ref?: Ref<PickerRef>;
-  // children?: JSX.Element | ((args: Pick<PickerExpose, 'open'>) => JSX.Element);
+  children?: JSX.Element | ((args?: any) => JSX.Element);
 } & Pick<JSX.IntrinsicElements['dialog'], 'onClose' | 'onCancel'>;
 
 export type PickerProps = {

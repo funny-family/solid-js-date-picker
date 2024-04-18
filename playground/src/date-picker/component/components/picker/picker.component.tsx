@@ -111,13 +111,16 @@ export var Picker: PickerComponent = (attrsAndProps) => {
         (pickerRef as any) = el;
 
         (pickerRef as any)[pickerExposeSymbol] = {
-          open: pickerStore.open,
           show,
           close,
         } satisfies PickerExpose;
       }}
       class={`${attrs?.class || ''} solid-js-date-picker-picker`}
       onClick={(event) => onClick(event as any)}
-    />
+    >
+      {typeof attrs?.children === 'function'
+        ? attrs.children({ ref: pickerRef })
+        : attrs?.children}
+    </dialog>
   );
 };
