@@ -22,7 +22,7 @@ body {
 
 .a6dadgauydag {
   display: inline-block;
-  width: 300px;
+  /* width: 300px; */
   border: 2px solid red;
   border-radius: 4px;
 }

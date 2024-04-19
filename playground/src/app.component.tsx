@@ -12,6 +12,7 @@ import {
   pickerExposeSymbol,
 } from '../../lib/component/components/picker/picker.component';
 import { PickerRef } from '../../lib/component/components/picker/picker.component.types';
+import { TestDatePicker } from './test-date-picker';
 
 window.pickerExposeSymbol = pickerExposeSymbol;
 
@@ -37,6 +38,7 @@ export const App: Component = () => {
           <br />
 
           <DatePicker
+            // children={null}
             class="a6dadgauydag"
             format={formatString}
             placeholder={formatString}
@@ -160,6 +162,14 @@ export const App: Component = () => {
               open
             </button>
           </section>
+        </div>
+      </section>
+
+      <section>
+        <h1>Wrapped style DatePicker</h1>
+
+        <div>
+          <TestDatePicker />
         </div>
       </section>
     </main>
