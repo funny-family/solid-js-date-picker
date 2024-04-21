@@ -4,7 +4,8 @@ import type { DatePickerAttrsAndProps } from './date-picker.component.types';
 export var constructProps = (attrsAndProps: DatePickerAttrsAndProps) => {
   const splittedAttrsAndProps = splitProps(
     attrsAndProps,
-    ['keepNativePicker', 'format', 'onOpen', 'onClose'],
+    // ['keepNativePicker', 'format', 'onOpen', 'onClose'],
+    ['format'],
     [
       'accept',
       'alt',

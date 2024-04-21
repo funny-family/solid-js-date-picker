@@ -5,12 +5,16 @@ import type {
 import { constructProps } from './date-picker.props';
 import './date-picker.styles.scss';
 
+export var datasetElementName = 'date-input' as const;
+
 export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   var [props, inputAttrs, customAttrs, restAttrs] =
     constructProps(attrsAndProps);
 
+  console.log({ attrsAndProps, customAttrs });
+
   var containerRef: HTMLDivElement = null as any;
-  var dateInputRef: DatePickerForwardElement = null as any;
+  var dateInputRef: DatePickerForwardElement = customAttrs?.ref as any;
   var textInputRef: HTMLInputElement = null as any;
 
   var DefaultChildren = () => {
@@ -30,12 +34,11 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           }}
         />
         <input
+          data-element-name={datasetElementName}
           {...inputAttrs}
           type="date"
           class="solid-js-date-picker-input"
-          ref={(el) => {
-            dateInputRef = el;
-          }}
+          ref={dateInputRef}
         />
       </>
     );
@@ -50,6 +53,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       ref={(el) => {
         containerRef = el;
       }}
+
       // onInput={(event) => {
       //   if (event.target === dateInputRef) {
       //     // TODO: format value and set it later
