@@ -6,6 +6,7 @@ import {
   onMount,
   splitProps,
   createEffect,
+  children as toChildren,
 } from 'solid-js';
 import {} from 'solid-js/web';
 import type {
@@ -92,6 +93,8 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   // var pickerRef: PickerRef = null as any;
   var [pickerRef, setPickerRef] = createSignal(null as unknown as PickerRef);
 
+  const children = toChildren(() => restAttrs?.children as HTMLElement);
+
   // var currentDate = new Date();
   var [value, setValue] = createSignal(
     // attrs?.value || currentDate.toISOString().substring(0, 10)
@@ -163,6 +166,12 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   //   //   })()
   //   // );
   // });
+
+  createEffect(() => {
+    (children.toArray() as HTMLElement[]).forEach((child) => {
+      console.log('child:', child);
+    });
+  });
 
   onMount(() => {
     // =============== get position of container element ===============
