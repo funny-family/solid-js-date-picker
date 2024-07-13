@@ -13,7 +13,7 @@ export type DatePickerAttrs = Omit<
   children?: JSX.Element | (() => JSX.Element);
 } & {
   accesskey?: string;
-  is: string;
+  is?: string;
   nonce?: string;
   writingsuggestions?: boolean;
 };

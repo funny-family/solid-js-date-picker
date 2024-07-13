@@ -60,6 +60,13 @@ export var INPUT_DATE_CONTENT_ATTRS = [
   'step',
 ] as const;
 
+export var INPUT_DATE_CONTENT_ATTRS_OBJECT = Object.groupBy(
+  INPUT_DATE_CONTENT_ATTRS,
+  (v) => {
+    return v;
+  }
+);
+
 // export var INPUT_DATE_IDL_ATTRS = [
 //   'value',
 //   'valueAsDate',

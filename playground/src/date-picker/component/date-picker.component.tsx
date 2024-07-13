@@ -1,32 +1,37 @@
+import { createEffect, createSignal, onMount } from 'solid-js';
 import type {
   DatePickerComponent,
   DatePickerForwardElement,
 } from './date-picker.component.types';
-import { constructProps } from './date-picker.props';
+import {
+  INPUT_DATE_CONTENT_ATTRS_OBJECT,
+  constructProps,
+} from './date-picker.props';
 import './date-picker.styles.scss';
 
 export var datasetElementName = 'date-input' as const;
 
 export var DatePicker: DatePickerComponent = (attrsAndProps) => {
-  var [props, inputAttrs, customAttrs, restAttrs] =
-    constructProps(attrsAndProps);
-
-  console.log({ attrsAndProps, customAttrs });
+  var constructedProps = constructProps(attrsAndProps);
 
   var containerRef: HTMLDivElement = null as any;
-  var dateInputRef: DatePickerForwardElement = customAttrs?.ref as any;
   var textInputRef: HTMLInputElement = null as any;
+  var dateInputRef: DatePickerForwardElement = null as any;
+
+  createEffect(() => {
+    console.log({ containerRef, dateInputRef, textInputRef });
+  });
+
+  // onMount(() => {
+  //   dateInputRef = new Proxy(dateInputRef, {
+  //     //
+  //   });
+  // });
 
   var DefaultChildren = () => {
     return (
       <>
-        {/* <pre>
-          <div>isPickerVisible: {`${isPickerVisible()}`}</div>
-          <div>keepNativePicker: {`${keepNativePicker()}`}</div>
-        </pre> */}
-
         <input
-          {...inputAttrs}
           type="text"
           class="solid-js-date-picker-input"
           ref={(el) => {
@@ -34,11 +39,31 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           }}
         />
         <input
-          data-element-name={datasetElementName}
-          {...inputAttrs}
+          {...constructedProps.dateAttr}
           type="date"
           class="solid-js-date-picker-input"
-          ref={dateInputRef}
+          ref={(el) => {
+            var proxyfiedEl = new Proxy(el, {
+              get(target, prop, receiver) {
+                if (Reflect.has(target, INPUT_DATE_CONTENT_ATTRS_OBJECT[0])) {
+                  return Reflect.get(target, prop);
+                }
+
+                return Reflect.get(containerRef, prop);
+              },
+            });
+
+            dateInputRef = proxyfiedEl;
+
+            if (constructedProps.customAttr?.ref != null) {
+              Reflect.apply(
+                constructedProps.customAttr?.ref as Function,
+                undefined,
+                [proxyfiedEl]
+              );
+            }
+          }}
+          hidden
         />
       </>
     );
@@ -46,10 +71,12 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
 
   return (
     <div
-      {...(restAttrs as any)}
-      $ServerOnly={customAttrs?.$ServerOnly}
-      classList={customAttrs?.classList}
-      class={`${restAttrs?.class || ''} solid-js-date-picker-container`}
+      {...(constructedProps.rest as any)}
+      $ServerOnly={constructedProps.customAttr?.$ServerOnly}
+      classList={constructedProps.customAttr?.classList}
+      class={`${
+        constructedProps.rest?.class || ''
+      } solid-js-date-picker-container`}
       ref={(el) => {
         containerRef = el;
       }}
@@ -87,9 +114,9 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         </Show>
       </Show> */}
 
-      {typeof restAttrs?.children === 'function'
-        ? restAttrs.children()
-        : restAttrs?.children}
+      {typeof constructedProps.rest?.children === 'function'
+        ? constructedProps.rest.children()
+        : constructedProps.rest?.children}
     </div>
   );
 };
