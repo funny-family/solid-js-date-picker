@@ -5,18 +5,21 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "f": "node ./src/utils/input-attrs.js"
   },
   "devDependencies": {
+    "html-table-to-json": "^1.0.0",
+    "jsdom": "^24.1.0",
     "sass": "^1.71.0",
     "solid-devtools": "^0.27.7",
+    "tabletojson": "^4.1.4",
     "typescript": "^5.2.2",
     "vite": "^4.5.2",
     "vite-plugin-solid": "^2.8.2"
   },
   "dependencies": {
     "solid-js": "^1.8.11",
-    "solid-js-date-picker": "file:../solid-js-date-picker-0.0.0.tgz",
     "vite-plugin-inspect": "^0.8.1"
   }
 }
