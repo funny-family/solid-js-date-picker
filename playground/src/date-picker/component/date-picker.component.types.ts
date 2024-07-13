@@ -6,54 +6,21 @@ export type DatePickerRef = DatePickerForwardElement;
 
 export type DatePickerAttrs = Omit<
   JSX.IntrinsicElements['input'],
-  /* --------------------------------- omitted attrs ------------------------- */
-  // | 'type'
-  // | 'accept'
-  // | 'alt'
-  // | 'capture'
-  // | 'checked'
-  // | 'dirname'
-  // | 'formaction'
-  // | 'formenctype'
-  // | 'formtarget'
-  // | 'height'
-  // | 'maxlength'
-  // | 'minlength'
-  // | 'multiple'
-  // | 'pattern'
-  // | 'popovertarget'
-  // | 'popovertargetaction'
-  // | 'size'
-  // | 'width'
-  // | 'contenteditable'
-  // | 'inputmode'
-  // | 'inputmode'
-  // | 'innerHTML'
-  // | 'innerText'
-  // //
-  // | 'maxLength'
-  // | 'minLength'
-  // | 'contentEditable'
-  // | 'formAction'
-  // | 'formEnctype'
-  // | 'formTarget'
-  // | 'autoCapitalize'
-  // | 'formmethod'
-  // | 'formMethod'
-  // | 'readOnly'
-  // | 'crossOrigin'
-  // | 'formNoValidate'
-  /* --------------------------------- omitted attrs ------------------------- */
   /* ------------------------- overwritten attrs ------------------------- */
   'children'
   /* ------------------------- overwritten attrs ------------------------- */
 > & {
   children?: JSX.Element | (() => JSX.Element);
+} & {
+  accesskey?: string;
+  is: string;
+  nonce?: string;
+  writingsuggestions?: boolean;
 };
 
 export type DatePickerProps = {
-  // keepNativePicker?: boolean;
-  format?: string;
+  keepNativePicker?: boolean;
+  // format?: string;
   // onOpen?: JSX.EventHandlerUnion<HTMLElement, Event>;
   // onClose?: JSX.EventHandlerUnion<HTMLElement, Event>;
 };
