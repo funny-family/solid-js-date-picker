@@ -26,6 +26,7 @@
     "autoname",
     "contenteditable",
     "datepicker",
+    "enterkeyhint",
     "focusable",
     "formaction",
     "formenctype",
@@ -33,10 +34,17 @@
     "formtarget",
     "hoverable",
     "inputmode",
+    "itemid",
+    "itemprop",
+    "itemref",
+    "itemscope",
+    "itemtype",
     "labelledby",
     "maxlength",
     "popovertarget",
     "popovertargetaction",
-    "tooltipable"
+    "proxyfied",
+    "tooltipable",
+    "writingsuggestions"
   ]
 }
