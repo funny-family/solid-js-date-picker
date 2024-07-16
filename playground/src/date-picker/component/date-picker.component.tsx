@@ -3,11 +3,9 @@ import type {
   DatePickerComponent,
   DatePickerForwardElement,
 } from './date-picker.component.types';
-import {
-  INPUT_DATE_CONTENT_ATTRS_OBJECT,
-  constructProps,
-} from './date-picker.props';
+import { constructProps } from './date-picker.props';
 import './date-picker.styles.scss';
+import { hasInputRelatedAttr } from './utils';
 
 export var datasetElementName = 'date-input' as const;
 
@@ -33,7 +31,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       <>
         <input
           type="text"
-          class="solid-js-date-picker-input"
+          class="solid-js-date-picker__input solid-js-date-picker__input-text"
           ref={(el) => {
             textInputRef = el;
           }}
@@ -41,15 +39,22 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         <input
           {...constructedProps.dateAttr}
           type="date"
-          class="solid-js-date-picker-input"
+          class="solid-js-date-picker__input solid-js-date-picker__input-date"
           ref={(el) => {
             var proxyfiedEl = new Proxy(el, {
-              get(target, prop, receiver) {
-                if (Reflect.has(target, INPUT_DATE_CONTENT_ATTRS_OBJECT[0])) {
-                  return Reflect.get(target, prop);
+              get(target, property) {
+                if (hasInputRelatedAttr(target, property)) {
+                  return Reflect.get(target, property);
                 }
 
-                return Reflect.get(containerRef, prop);
+                return Reflect.get(containerRef, property);
+              },
+              set(target, property, value, receiver) {
+                if (hasInputRelatedAttr(target, property)) {
+                  return Reflect.set(target, property, value, receiver);
+                }
+
+                return Reflect.set(containerRef, property, value, containerRef);
               },
             });
 
@@ -76,7 +81,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       classList={constructedProps.customAttr?.classList}
       class={`${
         constructedProps.rest?.class || ''
-      } solid-js-date-picker-container`}
+      } solid-js-date-picker solid-js-date-picker__container`}
       ref={(el) => {
         containerRef = el;
       }}
