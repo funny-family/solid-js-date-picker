@@ -42,19 +42,19 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           class="solid-js-date-picker__input solid-js-date-picker__input-date"
           ref={(el) => {
             var proxyfiedEl = new Proxy(el, {
-              get(target, property) {
-                if (hasInputRelatedAttr(target, property)) {
-                  return Reflect.get(target, property);
+              get(target, property, receiver) {
+                if (Reflect.has(containerRef, property)) {
+                  return Reflect.get(containerRef, property, containerRef);
                 }
 
-                return Reflect.get(containerRef, property);
+                return Reflect.get(target, property, target);
               },
               set(target, property, value, receiver) {
-                if (hasInputRelatedAttr(target, property)) {
-                  return Reflect.set(target, property, value, receiver);
+                if (Reflect.has(containerRef, property)) {
+                  return Reflect.set(containerRef, property, value, containerRef);
                 }
 
-                return Reflect.set(containerRef, property, value, containerRef);
+                return Reflect.set(target, property, value, target);
               },
             });
 
@@ -85,7 +85,6 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       ref={(el) => {
         containerRef = el;
       }}
-
       // onInput={(event) => {
       //   if (event.target === dateInputRef) {
       //     // TODO: format value and set it later
@@ -96,6 +95,11 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       //     console.log('input text "input" event:', event);
       //   }
       // }}
+
+      onChange={(event) => {
+        dateInputRef.value = (event.target as HTMLInputElement).value;
+        console.log({ event, target: event.target });
+      }}
     >
       <DefaultChildren />
 
