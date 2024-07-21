@@ -69,3 +69,10 @@
   // display: none;
   // visibility: hidden;
 }
+
+@scope (.solid-js-date-picker) {
+  :scope {
+    border: 2px solid red;
+    display: inline-block;
+  }
+}

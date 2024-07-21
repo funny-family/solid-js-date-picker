@@ -1,4 +1,11 @@
-import { createEffect, createSignal, onMount } from 'solid-js';
+import {
+  Component,
+  createEffect,
+  createSignal,
+  JSX,
+  onMount,
+  splitProps,
+} from 'solid-js';
 import type {
   DatePickerComponent,
   DatePickerForwardElement,
@@ -9,123 +16,123 @@ import { hasInputRelatedAttr } from './utils';
 
 export var datasetElementName = 'date-input' as const;
 
-export var DatePicker: DatePickerComponent = (attrsAndProps) => {
-  var constructedProps = constructProps(attrsAndProps);
+export var DatePicker: Component<
+  Omit<
+    JSX.IntrinsicElements['input'],
+    /* ------------------------- overwritten attrs ------------------------- */
+    'children'
+    /* ------------------------- overwritten attrs ------------------------- */
+  > & {
+    children?: JSX.Element | (() => JSX.Element);
+  }
+> = (attrsAndProps) => {
+  var [customAttr, inputAttr, rest] = splitProps(
+    attrsAndProps,
+    ['classList', 'ref', '$ServerOnly', 'children'],
+    [
+      'accept',
+      'alt',
+      'autocomplete',
+      'autocorrect',
+      'autofocus',
+      'capture',
+      'checked',
+      'crossorigin',
+      'disabled',
+      'enterkeyhint',
+      'form',
+      'formaction',
+      'formenctype',
+      'formmethod',
+      'formnovalidate',
+      'formtarget',
+      'height',
+      'incremental',
+      'list',
+      'max',
+      'maxlength',
+      'min',
+      'minlength',
+      'multiple',
+      'name',
+      'pattern',
+      'placeholder',
+      'readonly',
+      'results',
+      'required',
+      'size',
+      'src',
+      'step',
+      'type',
+      'value',
+      'width',
+      'crossOrigin',
+      'formAction',
+      'formEnctype',
+      'formMethod',
+      'formNoValidate',
+      'formTarget',
+      'maxLength',
+      'minLength',
+      'readOnly',
+    ]
+  );
 
   var containerRef: HTMLDivElement = null as any;
   var textInputRef: HTMLInputElement = null as any;
-  var dateInputRef: DatePickerForwardElement = null as any;
+  var dateInputRef: HTMLInputElement = null as any;
 
-  createEffect(() => {
-    console.log({ containerRef, dateInputRef, textInputRef });
-  });
-
-  // onMount(() => {
-  //   dateInputRef = new Proxy(dateInputRef, {
-  //     //
-  //   });
-  // });
+  var inputMode: JSX.HTMLAttributes<HTMLInputElement>['inputMode'] = 'numeric';
 
   var DefaultChildren = () => {
     return (
       <>
         <input
-          type="text"
-          class="solid-js-date-picker__input solid-js-date-picker__input-text"
-          ref={(el) => {
-            textInputRef = el;
-          }}
-        />
-        <input
-          {...constructedProps.dateAttr}
+          {...inputAttr}
           type="date"
-          class="solid-js-date-picker__input solid-js-date-picker__input-date"
-          ref={(el) => {
-            var proxyfiedEl = new Proxy(el, {
-              get(target, property, receiver) {
-                if (Reflect.has(containerRef, property)) {
-                  return Reflect.get(containerRef, property, containerRef);
-                }
-
-                return Reflect.get(target, property, target);
-              },
-              set(target, property, value, receiver) {
-                if (Reflect.has(containerRef, property)) {
-                  return Reflect.set(containerRef, property, value, containerRef);
-                }
-
-                return Reflect.set(target, property, value, target);
-              },
-            });
-
-            dateInputRef = proxyfiedEl;
-
-            if (constructedProps.customAttr?.ref != null) {
-              Reflect.apply(
-                constructedProps.customAttr?.ref as Function,
-                undefined,
-                [proxyfiedEl]
-              );
-            }
-          }}
-          hidden
+          ref={dateInputRef}
+          list={inputAttr?.list}
         />
+
+        {typeof customAttr?.children === 'function'
+          ? customAttr.children()
+          : customAttr?.children}
       </>
     );
   };
 
   return (
     <div
-      {...(constructedProps.rest as any)}
-      $ServerOnly={constructedProps.customAttr?.$ServerOnly}
-      classList={constructedProps.customAttr?.classList}
-      class={`${
-        constructedProps.rest?.class || ''
-      } solid-js-date-picker solid-js-date-picker__container`}
-      ref={(el) => {
-        containerRef = el;
-      }}
-      // onInput={(event) => {
-      //   if (event.target === dateInputRef) {
-      //     // TODO: format value and set it later
-      //     // setValue((event.target as HTMLInputElement).value);
-      //   }
+      {...(rest as any)}
+      classList={customAttr?.classList}
+      $ServerOnly={customAttr?.$ServerOnly}
+      ref={(element) => {
+        containerRef = element;
 
-      //   if (event.target === textInputRef) {
-      //     console.log('input text "input" event:', event);
-      //   }
-      // }}
-
-      onChange={(event) => {
-        dateInputRef.value = (event.target as HTMLInputElement).value;
-        console.log({ event, target: event.target });
+        if (customAttr?.ref != null) {
+          Reflect.apply(customAttr?.ref as Function, undefined, [element]);
+        }
       }}
+      class={`solid-js-date-picker`}
+      inputmode={null}
+      inputMode={null}
+      autocapitalize={null}
+      autoCapitalize={null}
+      lang={null}
     >
+      <input
+        {...inputAttr}
+        type="text"
+        ref={textInputRef}
+        inputMode={rest?.inputMode || inputMode}
+        inputmode={rest?.inputmode || inputMode}
+        autocapitalize={rest?.autocapitalize}
+        autoCapitalize={rest?.autoCapitalize}
+        lang={rest?.lang}
+        list={null as any}
+      />
+
       <DefaultChildren />
-
-      {/* <Show when={keepNativePicker() === false} fallback={null}>
-        <Show when={isPickerVisible()} fallback={null}>
-          <Picker
-            class="solid-js-date-picker__picker"
-            ref={(el) => {
-              setPickerRef(el);
-            }}
-            onOpen={(event) => {
-              (onOpen as any)(event);
-            }}
-            onClose={(event) => {
-              (onClose as any)(event);
-            }}
-          >
-            <input type="text" />
-            <button type="button">1231</button>
-          </Picker>
-        </Show>
-      </Show> */}
-
-      {typeof constructedProps.rest?.children === 'function'
-        ? constructedProps.rest.children()
-        : constructedProps.rest?.children}
     </div>
   );
 };

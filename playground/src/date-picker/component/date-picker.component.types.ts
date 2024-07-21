@@ -11,15 +11,10 @@ export type DatePickerAttrs = Omit<
   /* ------------------------- overwritten attrs ------------------------- */
 > & {
   children?: JSX.Element | (() => JSX.Element);
-} & {
-  accesskey?: string;
-  is?: string;
-  nonce?: string;
-  writingsuggestions?: boolean;
 };
 
 export type DatePickerProps = {
-  keepNativePicker?: boolean;
+  // keepNativePicker?: boolean;
   // format?: string;
   // onOpen?: JSX.EventHandlerUnion<HTMLElement, Event>;
   // onClose?: JSX.EventHandlerUnion<HTMLElement, Event>;
