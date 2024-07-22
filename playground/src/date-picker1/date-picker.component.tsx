@@ -1,6 +1,9 @@
-import { createEffect, createSignal, on, splitProps } from 'solid-js';
+import { createEffect, createSignal, type JSX, on, splitProps } from 'solid-js';
 import type { DatePickerComponent } from './date-picker.component.types';
 import { Portal } from 'solid-js/web';
+import './date-picker.styles.scss';
+
+var isArray = Array.isArray;
 
 export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   var textInputRef: HTMLInputElement = null as any;
@@ -16,6 +19,8 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
   // const [value, setValue] = createSignal(rest?.value || '');
   const [stringDateValue, setStringDateValue] = createSignal('');
 
+  var inputMode: JSX.HTMLAttributes<HTMLInputElement>['inputMode'] = 'numeric';
+
   // createEffect(
   //   on(
   //     () => textInputRef.value,
@@ -27,7 +32,7 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
 
   <Portal
     ref={(el) => {
-      //
+      el.classList.add('solid-js-date-picker-children-container');
     }}
   >
     <input
@@ -38,7 +43,10 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         dateInputRef = el;
       }}
       onChange={(event) => {
-        console.log({ event, target: event.target });
+        console.log('input date "change" event:', {
+          event,
+          target: event.target,
+        });
       }}
     />
 
@@ -55,6 +63,9 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
       {...rest}
       $ServerOnly={customAttrs?.$ServerOnly}
       classList={customAttrs?.classList}
+      inputmode={rest?.inputmode || inputMode}
+      inputMode={rest?.inputmode || inputMode}
+      class={`${rest?.class || ''} solid-js-date-picker`}
       ref={(el) => {
         var proxyfiedEl = new Proxy(el, {
           get(target, property, receiver) {
@@ -87,11 +98,15 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
           set(target, property, value, receiver) {
             console.log('set:', { target, property, value, receiver });
 
-            if (
-              property === 'value' ||
-              property === 'valueAsDate' ||
-              property === 'valueAsNumber'
-            ) {
+            if (property === 'value') {
+              return Reflect.set(dateInputRef, property, value, dateInputRef);
+            }
+
+            if (property === 'valueAsDate') {
+              return Reflect.set(dateInputRef, property, value, dateInputRef);
+            }
+
+            if (property === 'valueAsNumber') {
               return Reflect.set(dateInputRef, property, value, dateInputRef);
             }
 
@@ -117,6 +132,19 @@ export var DatePicker: DatePickerComponent = (attrsAndProps) => {
         //   'dateInputRef.valueAsNumber': dateInputRef.valueAsNumber,
         //   'dateInputRef.valueAsDate': dateInputRef.valueAsDate,
         // });
+      }}
+      onPaste={(event) => {
+        event.preventDefault();
+
+        if (rest?.onPaste != null) {
+          if (typeof rest.onPaste === 'function') {
+            rest.onPaste(event);
+          }
+
+          if (isArray(rest.onPaste)) {
+            //
+          }
+        }
       }}
       list={null as any}
     />

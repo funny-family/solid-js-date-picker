@@ -1,0 +1,12 @@
+.solid-js-date-picker {
+  border: 2px solid black;
+
+  anchor-name: --anchor-el;
+}
+
+.solid-js-date-picker-children-container {
+  position: absolute;
+  position-anchor: --anchor-el;
+  left: anchor(left);
+  top: anchor(bottom);
+}
