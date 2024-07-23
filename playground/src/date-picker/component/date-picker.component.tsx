@@ -14,14 +14,61 @@ import type {
 import { constructProps } from './date-picker.props';
 import './date-picker.styles.scss';
 import { hasInputRelatedAttr } from './utils';
+import { filterProps } from '@solid-primitives/props';
 
 export var datasetElementName = 'date-input' as const;
 
 export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
-  var [customAttr, dateInputContentAttr, rest] = splitProps(
+  var [customAttr, inputAttr, rest] = splitProps(
     attrsAndProps,
     ['classList', 'ref', '$ServerOnly', 'children'],
-    ['step', 'min', 'max', 'readonly', 'required', 'list', 'autocomplete']
+    [
+      'accept',
+      'alt',
+      'autocomplete',
+      'autocorrect',
+      'autofocus',
+      'capture',
+      'checked',
+      'crossorigin',
+      'disabled',
+      'enterkeyhint',
+      'form',
+      'formaction',
+      'formenctype',
+      'formmethod',
+      'formnovalidate',
+      'formtarget',
+      'height',
+      'incremental',
+      'list',
+      'max',
+      'maxlength',
+      'min',
+      'minlength',
+      'multiple',
+      'name',
+      'pattern',
+      'placeholder',
+      'readonly',
+      'results',
+      'required',
+      'size',
+      'src',
+      'step',
+      'type',
+      'value',
+      'width',
+      'crossOrigin',
+      'formAction',
+      'formEnctype',
+      'formMethod',
+      'formNoValidate',
+      'formTarget',
+      'maxLength',
+      'minLength',
+      'readOnly',
+    ]
   );
 
   var containerRef: HTMLDivElement = null as any;
@@ -29,18 +76,6 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
   var dateInputRef: HTMLInputElement = null as any;
 
   var inputMode: JSX.HTMLAttributes<HTMLInputElement>['inputMode'] = 'numeric';
-
-  // var DefaultChildren = () => {
-  //   return (
-  //     <>
-  //       <input {...dateInputContentAttr} type="date" ref={dateInputRef} />
-
-  //       {typeof customAttr?.children === 'function'
-  //         ? customAttr.children()
-  //         : customAttr?.children}
-  //     </>
-  //   );
-  // };
 
   var TextInput = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
     return (
@@ -60,36 +95,21 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
         inputMode={rest?.inputMode || attrsAndProps?.inputMode || inputMode}
         inputmode={rest?.inputmode || attrsAndProps?.inputmode || inputMode}
         lang={rest?.lang || attrsAndProps?.lang}
-        list={null as any}
-        accept={null as any}
-        capture={null as any}
-        step={null as any}
-        autocomplete={null as any}
-        width={null as any}
-        height={null as any}
-        src={null as any}
+        autocorrect={inputAttr?.autocorrect || attrsAndProps?.autocorrect}
+        autofocus={inputAttr?.autofocus || attrsAndProps?.autofocus}
+        placeholder={inputAttr?.placeholder || attrsAndProps?.placeholder}
+        autocomplete={inputAttr?.autocomplete || attrsAndProps?.autocomplete}
+        disabled={inputAttr?.disabled || attrsAndProps?.disabled}
       />
     );
-  }) as Component<
-    Omit<
-      JSX.IntrinsicElements['input'],
-      | 'type'
-      | 'list'
-      | 'accept'
-      | 'capture'
-      | 'step'
-      | 'children'
-      | 'autocomplete'
-      | 'dirname'
-    >
-  >;
+  }) as Component<Omit<JSX.IntrinsicElements['input'], 'type'>>;
 
   var DateInput = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
     return (
       <input
-        {...dateInputContentAttr}
-        {...attrsAndProps}
         type="date"
+        {...inputAttr}
+        {...attrsAndProps}
         class={`${
           attrsAndProps?.class || ''
         } solid-js-date-picker__input solid-js-date-picker__input-date`}
@@ -100,30 +120,13 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
             Reflect.apply(customAttr?.ref as Function, undefined, [element]);
           }
         }}
-        list={rest?.list || attrsAndProps?.list}
-        accept={null as any}
-        capture={null as any}
+        list={inputAttr?.list || inputAttr?.list}
+        disabled={inputAttr?.disabled || attrsAndProps?.disabled}
         autocomplete={null as any}
-        width={null as any}
-        height={null as any}
-        size={null as any}
-        src={null as any}
+        placeholder={null as any}
       />
     );
-  }) as Component<
-    Omit<
-      JSX.IntrinsicElements['input'],
-      | 'type'
-      | 'children'
-      | 'accept'
-      | 'capture'
-      | 'autocomplete'
-      | 'dirname'
-      | 'width'
-      | 'height'
-      | 'size'
-    >
-  >;
+  }) as Component<Omit<JSX.IntrinsicElements['input'], 'type'>>;
 
   var DefaultChildren = (
     <>
@@ -134,7 +137,7 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
 
   return (
     <div
-      {...rest}
+      {...(rest as any)}
       classList={customAttr?.classList}
       $ServerOnly={customAttr?.$ServerOnly}
       ref={(element) => {
@@ -188,10 +191,13 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
         }
       }}
       class={`${rest?.class || ''} solid-js-date-picker`}
+      //
       inputmode={null as any}
       inputMode={null as any}
+      //
       autocapitalize={null as any}
       autoCapitalize={null as any}
+      //
       lang={null as any}
       contenteditable={null as any}
     >
@@ -224,17 +230,6 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
   Omit<
     JSX.IntrinsicElements['input'],
     | 'type'
-    | 'accept'
-    | 'alt'
-    | 'autocapitalize'
-    | 'autoCapitalize'
-    | 'autocomplete'
-    | 'accept'
-    | 'capture'
-    | 'dirname'
-    | 'width'
-    | 'height'
-    | 'src'
     /* ------------------------- overwritten attrs ------------------------- */
     | 'children'
     /* ------------------------- overwritten attrs ------------------------- */

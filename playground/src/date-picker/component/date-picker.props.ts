@@ -1,5 +1,9 @@
-import { splitProps } from 'solid-js';
+import { type JSX, splitProps } from 'solid-js';
 import type { DatePickerAttrsAndProps } from './date-picker.component.types';
+
+type SOLID_JS_INPUT_ATTR = JSX.HTMLFormEncType;
+
+export var INPUT_ATTR_RECORD = {};
 
 export var DATE_PICKER_PROPS = ['keepNativePicker'] as const;
 
