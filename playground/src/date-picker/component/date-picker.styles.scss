@@ -72,8 +72,12 @@
 
 @scope (.solid-js-date-picker) {
   :scope {
-    border: 2px solid red;
-    width: fit-content;
+    display: inline-flex;
+    border: 1px solid light-dark(black, grey);
+
+    &:focus-within {
+      outline: 1px solid light-dark(grey, white);
+    }
   }
 
   .solid-js-date-picker__input {
@@ -81,10 +85,28 @@
   }
 
   .solid-js-date-picker__input-text {
-    //
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .solid-js-date-picker__input-date {
-    //
+    position: absolute;
+    // test
+    top: 40px;
+    // test
+  }
+
+  .solid-js-date-picker__button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: light-dark(lightgray, grey);
+    }
   }
 }

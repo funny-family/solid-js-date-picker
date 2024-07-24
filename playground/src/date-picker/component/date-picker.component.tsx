@@ -75,9 +75,11 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
   var textInputRef: HTMLInputElement = null as any;
   var dateInputRef: HTMLInputElement = null as any;
 
-  var inputMode: JSX.HTMLAttributes<HTMLInputElement>['inputMode'] = 'numeric';
+  var inputmode: JSX.HTMLAttributes<HTMLInputElement>['inputmode'] = 'numeric';
 
   var TextInput = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
+    var tabindex: JSX.HTMLAttributes<HTMLInputElement>['tabindex'] = 0;
+
     return (
       <input
         type="text"
@@ -92,19 +94,23 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
             Reflect.apply(customAttr?.ref as Function, undefined, [element]);
           }
         }}
-        inputMode={rest?.inputMode || attrsAndProps?.inputMode || inputMode}
-        inputmode={rest?.inputmode || attrsAndProps?.inputmode || inputMode}
-        lang={rest?.lang || attrsAndProps?.lang}
-        autocorrect={inputAttr?.autocorrect || attrsAndProps?.autocorrect}
-        autofocus={inputAttr?.autofocus || attrsAndProps?.autofocus}
-        placeholder={inputAttr?.placeholder || attrsAndProps?.placeholder}
-        autocomplete={inputAttr?.autocomplete || attrsAndProps?.autocomplete}
-        disabled={inputAttr?.disabled || attrsAndProps?.disabled}
+        tabindex={attrsAndProps?.tabindex || rest?.tabindex || tabindex}
+        tabIndex={attrsAndProps?.tabIndex || rest?.tabIndex || tabindex}
+        inputMode={attrsAndProps?.inputMode || rest?.inputMode || inputmode}
+        inputmode={attrsAndProps?.inputmode || rest?.inputmode || inputmode}
+        lang={attrsAndProps?.lang || rest?.lang}
+        autocorrect={attrsAndProps?.autocorrect || inputAttr?.autocorrect}
+        autofocus={attrsAndProps?.autofocus || inputAttr?.autofocus}
+        placeholder={attrsAndProps?.placeholder || inputAttr?.placeholder}
+        autocomplete={attrsAndProps?.autocomplete || inputAttr?.autocomplete}
+        disabled={attrsAndProps?.disabled || inputAttr?.disabled}
       />
     );
   }) as Component<Omit<JSX.IntrinsicElements['input'], 'type'>>;
 
   var DateInput = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
+    var tabindex: JSX.HTMLAttributes<HTMLInputElement>['tabindex'] = 9999;
+
     return (
       <input
         type="date"
@@ -113,6 +119,8 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
         class={`${
           attrsAndProps?.class || ''
         } solid-js-date-picker__input solid-js-date-picker__input-date`}
+        tabindex={attrsAndProps?.tabindex || tabindex}
+        tabIndex={attrsAndProps?.tabIndex || tabindex}
         ref={(element) => {
           dateInputRef = element;
 
@@ -120,18 +128,49 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
             Reflect.apply(customAttr?.ref as Function, undefined, [element]);
           }
         }}
-        list={inputAttr?.list || inputAttr?.list}
-        disabled={inputAttr?.disabled || attrsAndProps?.disabled}
+        list={attrsAndProps?.list || inputAttr?.list}
+        disabled={attrsAndProps?.disabled || inputAttr?.disabled}
         autocomplete={null as any}
         placeholder={null as any}
       />
     );
   }) as Component<Omit<JSX.IntrinsicElements['input'], 'type'>>;
 
+  var Button = ((attrsAndProps: JSX.IntrinsicElements['button']) => {
+    var tabindex: JSX.HTMLAttributes<HTMLInputElement>['tabindex'] = 0;
+
+    return (
+      <button
+        type="button"
+        {...attrsAndProps}
+        aria-invalidattrsAndProps
+        class={`${attrsAndProps?.class || ''} solid-js-date-picker__button`}
+        tabindex={attrsAndProps?.tabindex || tabindex}
+        tabIndex={attrsAndProps?.tabIndex || tabindex}
+        onClick={(event) => {
+          dateInputRef.showPicker();
+
+          if (attrsAndProps?.onClick != null) {
+            if (typeof attrsAndProps.onClick === 'function') {
+              attrsAndProps.onClick(event);
+            }
+
+            if (Array.isArray(attrsAndProps.onClick)) {
+              // todo!
+            }
+          }
+        }}
+      >
+        🗓️
+      </button>
+    );
+  }) as Component<Omit<JSX.IntrinsicElements['button'], 'type'>>;
+
   var DefaultChildren = (
     <>
       {TextInput}
       {DateInput}
+      {Button}
     </>
   );
 
@@ -200,6 +239,7 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
       //
       lang={null as any}
       contenteditable={null as any}
+      contentEditable={null as any}
     >
       <Show
         when={customAttr?.children == null}
@@ -230,6 +270,40 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
   Omit<
     JSX.IntrinsicElements['input'],
     | 'type'
+    //
+    | 'alt'
+    //
+    | 'accept'
+    | 'capture'
+    | 'multiple'
+    //
+    | 'checked'
+    //
+    | 'formaction'
+    | 'formenctype'
+    | 'formmethod'
+    | 'formnovalidate'
+    | 'formtarget'
+    | 'formAction'
+    | 'formEnctype'
+    | 'formMethod'
+    | 'formNoValidate'
+    | 'formTarget'
+    //
+    | 'width'
+    | 'height'
+    //
+    | 'height'
+    //
+    | 'minlength'
+    | 'maxlength'
+    | 'minLength'
+    | 'maxLength'
+    //
+    | 'contenteditable'
+    | 'contentEditable'
+    //
+    | 'pattern'
     /* ------------------------- overwritten attrs ------------------------- */
     | 'children'
     /* ------------------------- overwritten attrs ------------------------- */
