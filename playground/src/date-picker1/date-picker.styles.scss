@@ -1,12 +1,59 @@
-.solid-js-date-picker {
-  border: 2px solid black;
+@scope (.solid-js-date-picker1) {
+  :scope {
+    position: relative;
+    display: inline-flex;
+    width: fit-content;
+    border: 1px solid light-dark(black, grey);
+    font-size: 16px;
 
-  anchor-name: --anchor-el;
+    &:focus-within {
+      outline: 1px solid light-dark(grey, white);
+    }
+  }
+
+  .solid-js-date-picker__input {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .solid-js-date-picker__input-day {
+    //
+  }
+
+  .solid-js-date-picker__input-month {
+    //
+  }
+
+  .solid-js-date-picker__input-year {
+    //
+  }
+
+  .solid-js-date-picker__input-date {
+    position: absolute;
+    top: 100%;
+  }
+
+  .solid-js-date-picker__button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    z-index: 1;
+
+    &:hover,
+    &:focus {
+      background-color: light-dark(lightgray, grey);
+    }
+  }
 }
 
-.solid-js-date-picker-children-container {
-  position: absolute;
-  position-anchor: --anchor-el;
-  left: anchor(left);
-  top: anchor(bottom);
+.solid-js-date-picker1.solid-js-date-picker_placeholder {
+  &::before {
+    content: attr(data-placeholder);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: light-dark(white, grey);
+    font-size: inherit;
+  }
 }
