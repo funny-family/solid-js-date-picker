@@ -101,7 +101,9 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
         lang={attrsAndProps?.lang || rest?.lang}
         autocorrect={attrsAndProps?.autocorrect || inputAttr?.autocorrect}
         autofocus={attrsAndProps?.autofocus || inputAttr?.autofocus}
-        placeholder={attrsAndProps?.placeholder || inputAttr?.placeholder}
+        placeholder={
+          attrsAndProps?.placeholder || inputAttr?.placeholder || 'YYYY-MM-DD'
+        }
         autocomplete={attrsAndProps?.autocomplete || inputAttr?.autocomplete}
         disabled={attrsAndProps?.disabled || inputAttr?.disabled}
       />
@@ -230,6 +232,38 @@ export var DatePicker = ((attrsAndProps: JSX.IntrinsicElements['input']) => {
         }
       }}
       class={`${rest?.class || ''} solid-js-date-picker`}
+      onPaste={(event) => {
+        var stopEvent = (event: Event) => {
+          event.preventDefault();
+
+          return false;
+        };
+
+        var target = event.target;
+        let value = event.clipboardData?.getData('text');
+
+        if (target === textInputRef) {
+          // if (value != null) {
+          //   if (Number.isNaN(+value)) {
+          //     stopEvent(event);
+          //   }
+
+          //   var valueAsNumber = Date.parse(value);
+
+          //   if (Number.isNaN(valueAsNumber)) {
+          //     stopEvent(event);
+          //   }
+          // }
+
+          // // var value = (target as HTMLInputElement).value;
+
+          // console.log(value);
+
+          stopEvent(event);
+        }
+
+        // stopEvent();
+      }}
       //
       inputmode={null as any}
       inputMode={null as any}

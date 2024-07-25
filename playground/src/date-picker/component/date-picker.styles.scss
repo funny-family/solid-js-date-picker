@@ -47,7 +47,7 @@
   will-change: transform;
 }
 
-//
+// ================================================================================
 
 .solid-js-date-picker {
   //
@@ -86,6 +86,7 @@
 
   .solid-js-date-picker__input-text {
     border: none;
+    width: 100px;
 
     &:focus {
       outline: none;
