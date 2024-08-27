@@ -10,7 +10,7 @@ export var hasInputRelatedAttr = (
   );
 };
 
-var f = (str: string) => {
+export var f = (str: string) => {
   var result = {
     splitter: '',
     splitted: {
@@ -42,4 +42,28 @@ var f = (str: string) => {
   }
 
   return result;
+};
+
+export type Separator = '/' | '.' | '-' | ' ';
+export type Day = 'd' | 'D';
+export type Month = 'm' | 'M';
+export type Year = 'y' | 'Y';
+
+// //prettier-ignore
+// /**
+//  * @example
+//  * var format = createFormat('.', 'd', 'm', 'y');
+//  * console.log(format); // 'dd.mm.yyyy'
+//  */
+// export var createFormat = (
+//   separator: Separator,
+//   day: Day,
+//   month: Month,
+//   year: Year,
+// ): string => {
+//   var day = 
+// };
+
+export var createChangeEvent = <TEvent extends Event>(event: Event) => {
+  const onChange = (event: TEvent) => {};
 };
