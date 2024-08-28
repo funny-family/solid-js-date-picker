@@ -13,6 +13,18 @@ export var monthShortNameIdList_EN = [
   'Dec',
 ] as const;
 
+/**
+ * @see https://stackoverflow.com/questions/16353211/check-if-year-is-leap-year-in-javascript
+ * @see https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-6.php
+ */
+export var isLeapYear = (year: number) => {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+};
+
+export var daysInMonth = (month: number, year: number) => {
+  return new Date(year, month, 0).getDate();
+};
+
 export var monthAt = (monthId: number, monthShortNameIdList: string[]) => {
   switch (monthId) {
     case 0: {
@@ -97,7 +109,33 @@ export var isDatesEqual = (date1: Date, date2: Date) => {
   );
 };
 
-export var createMonthsWindowControl = (specifiedDate: Date) => {
+/*
+    Date: "09-01-2023"
+
+    Calendar (as days)
+    Mon Tue Wed Thu Fri Sat Sun
+    28  29  30  31  01  02  03
+    04  05  06  07  08  09  10
+    11  12  13  14  15  16  17
+    18  19  20  21  22  23  24
+    25  26  27  28  29  30  01
+    02  03  04  05  06  07  08
+
+    Calendar (as indexes)
+    Mon Tue Wed Thu Fri Sat Sun
+    00  01  02  03  04  05  06
+    07  08  09  10  11  12  13
+    14  15  16  17  18  19  20
+    21  22  23  24  25  26  27
+    28  29  30  31  32  33  34
+    35  36  37  38  39  40  41
+  */
+export var createMonthsWindowControl = (
+  specifiedDate: Date,
+  option: Map<string, unknown>
+) => {
+  // var
+
   var monthWindowLength = 42 as const;
   var monthWindowLastIndex = monthWindowLength - 1;
   var monthsWindow = new Array(
@@ -111,6 +149,15 @@ export var createMonthsWindowControl = (specifiedDate: Date) => {
       return 0;
     })
   );
+  var monthWindow_previousMonthStartIndex = 0; // always 0
+  var monthWindow_previousMonthEndIndex = 0; // ?
+  var monthWindow_currentMonthStartIndex = 0; // ?
+  var monthWindow_currentMonthEndIndex = 0; // ?
+  var monthWindow_nextMonthStartIndex = 0; // ?
+  var monthWindow_nextMonthEndIndex = monthWindowLastIndex; // always "monthWindowLastIndex" -> 41 = 42 - 1
+  var monthWindow = Array.from({ length: monthWindowLength }, () => {
+    return 0;
+  });
   var previousMonthMetadata = {
     previousMonthStartIndex: 0,
     previousMonthEndIndex: 0,
